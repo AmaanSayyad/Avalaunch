@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Command, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { WalletButton } from "./wallet/WalletButton";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,55 +41,71 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { name: "Explore Projects", href: "#projects", onClick: () => scrollToSection('projects') },
+    { name: "Explore Projects", href: "/explore", onClick: () => window.location.href = "/explore" },
     { name: "Create Project", href: "#create", onClick: () => scrollToSection('create') },
-    { name: "Governance", href: "#governance", onClick: () => scrollToSection('governance') },
-    { name: "How It Works", href: "#how-it-works", onClick: () => scrollToSection('how-it-works') },
+    { name: "Governance", href: "/governance", onClick: () => window.location.href = "/governance" },
+    { name: "How It Works", href: "#features", onClick: () => scrollToSection('features') },
+    { name: "For Investors", href: "#for-investors", onClick: () => scrollToSection('for-investors') },
   ];
 
   return (
     <header
-      className={`fixed top-3.5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 rounded-full ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? "h-14 bg-[#1B1B1B]/40 backdrop-blur-xl border border-white/10 scale-95 w-[90%] max-w-2xl" 
-          : "h-14 bg-[#1B1B1B] w-[95%] max-w-3xl"
+          ? "bg-black/80 backdrop-blur-xl border-b border-white/10" 
+          : "bg-transparent"
       }`}
     >
-      <div className="mx-auto h-full px-6">
+      <div className="container mx-auto h-20 px-6">
         <nav className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-2">
-            <Command className="w-5 h-5 text-primary" />
-            <span className="font-bold text-base">AvaFund</span>
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/20 p-2 rounded-lg">
+              <Command className="w-5 h-5 text-primary" />
+            </div>
+            <span className="font-bold text-lg tracking-tight">Avalaunch</span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (item.onClick) {
-                    item.onClick();
-                  }
-                }}
-                className="text-sm text-muted-foreground hover:text-foreground transition-all duration-300"
+          <div className="hidden md:flex items-center">
+            <div className="flex items-center mr-6">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (item.onClick) {
+                      item.onClick();
+                    }
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+            <div className="flex items-center gap-3 border-l border-white/10 pl-6">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-sm hover:bg-white/5"
+                onClick={() => window.location.href = "/investor-dashboard"}
               >
-                {item.name}
-              </a>
-            ))}
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="text-sm">
-                Dashboard
+                Investor Dashboard
               </Button>
               <Button 
-                onClick={() => scrollToSection('cta')}
-                size="sm"
-                className="button-gradient"
+                variant="ghost" 
+                size="sm" 
+                className="text-sm hover:bg-white/5"
+                onClick={() => window.location.href = "/founder-dashboard"}
               >
-                Connect Wallet
+                Founder Dashboard
               </Button>
+              <WalletButton 
+                size="sm"
+                variant="default"
+                className="button-gradient"
+              />
             </div>
           </div>
 
@@ -96,17 +113,24 @@ const Navigation = () => {
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="glass">
+                <Button variant="outline" size="icon" className="bg-white/5 border border-white/10 hover:bg-white/10">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="bg-[#1B1B1B]">
-                <div className="flex flex-col gap-4 mt-8">
+              <SheetContent className="bg-black/95 backdrop-blur-xl border-l border-white/10">
+                <div className="flex flex-col gap-6 mt-12">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="bg-primary/20 p-2 rounded-lg">
+                      <Command className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="font-bold text-lg tracking-tight">Avalaunch</span>
+                  </div>
+                  
                   {navItems.map((item) => (
                     <a
                       key={item.name}
                       href={item.href}
-                      className="text-lg text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-lg font-medium text-gray-200 hover:text-white transition-colors"
                       onClick={(e) => {
                         e.preventDefault();
                         setIsMobileMenuOpen(false);
@@ -118,24 +142,36 @@ const Navigation = () => {
                       {item.name}
                     </a>
                   ))}
-                  <div className="flex flex-col gap-2 mt-4">
+                  
+                  <div className="border-t border-white/10 my-4 pt-6 space-y-4">
+                    <h3 className="text-sm text-gray-400 font-medium uppercase tracking-wider">Dashboards</h3>
                     <Button 
-                      variant="outline"
+                      variant="ghost"
+                      className="w-full justify-start px-0 hover:bg-transparent hover:text-white"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
+                        window.location.href = "/investor-dashboard";
                       }}
                     >
-                      Dashboard
+                      Investor Dashboard
                     </Button>
                     <Button 
+                      variant="ghost"
+                      className="w-full justify-start px-0 hover:bg-transparent hover:text-white"
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        scrollToSection('cta');
+                        window.location.href = "/founder-dashboard";
                       }}
-                      className="button-gradient"
                     >
-                      Connect Wallet
+                      Founder Dashboard
                     </Button>
+                  </div>
+                  
+                  <div className="mt-auto pt-6">
+                    <WalletButton 
+                      variant="default"
+                      className="button-gradient w-full"
+                    />
                   </div>
                 </div>
               </SheetContent>

@@ -7,39 +7,39 @@ import { Card } from "./ui/card";
 const testimonials = [
   {
     name: "Michael Chen",
-    role: "Professional Trader",
+    role: "Angel Investor",
     image: "https://avatars.githubusercontent.com/u/1234567?v=4",
-    content: "The real-time market data and advanced trading features have significantly improved my trading performance. The platform's security measures give me peace of mind."
+    content: "Avalaunch's milestone-based funding has transformed how I invest in crypto projects. The transparency and accountability ensure I only fund projects that deliver on their promises."
   },
   {
     name: "Sarah Johnson",
-    role: "Crypto Fund Manager",
+    role: "Avalanche Ecosystem Fund",
     image: "https://avatars.githubusercontent.com/u/2345678?v=4",
-    content: "CryptoTrade's institutional-grade tools have transformed our trading strategy. The API integration and automated features have saved us countless hours."
+    content: "As an institutional investor, Avalaunch provides us with the governance tools we need to properly manage investments. The milestone voting system has significantly reduced our risk."
   },
   {
     name: "David Wilson",
-    role: "Early Crypto Investor",
+    role: "Project Founder",
     image: "https://avatars.githubusercontent.com/u/3456789?v=4",
-    content: "The customer support is exceptional, and the platform's intuitive design made getting started with crypto trading seamless. A game-changer for both beginners and pros."
+    content: "Launching our project on Avalaunch helped us establish credibility and connect with serious investors. The milestone structure forced us to be disciplined about our development roadmap."
   },
   {
     name: "Emily Zhang",
     role: "DeFi Developer",
     image: "https://avatars.githubusercontent.com/u/4567890?v=4",
-    content: "We've seen remarkable improvements in our trading efficiency since switching to CryptoTrade. The smart order routing and liquidity aggregation are particularly impressive."
+    content: "The platform made it easy to showcase our technical milestones to investors. Being able to receive funding incrementally as we hit targets helped us manage our runway effectively."
   },
   {
     name: "James Rodriguez",
-    role: "Crypto Security Expert",
+    role: "Blockchain Security Expert",
     image: "https://avatars.githubusercontent.com/u/5678901?v=4",
-    content: "The security features are robust and the regular updates keep us ahead of emerging threats. It's exactly what the crypto industry needed."
+    content: "The escrow system for milestone-based funding is brilliantly implemented. It provides security for both investors and project teams while ensuring transparency throughout."
   },
   {
     name: "Lisa Thompson",
-    role: "Portfolio Manager",
+    role: "Investment Portfolio Manager",
     image: "https://avatars.githubusercontent.com/u/6789012?v=4",
-    content: "The platform's ability to handle complex trading strategies while maintaining simplicity in its interface is remarkable. It's been invaluable for our portfolio management."
+    content: "Avalaunch has become our go-to platform for Avalanche ecosystem investments. The detailed analytics and milestone tracking help us make data-driven investment decisions."
   }
 ];
 
@@ -54,9 +54,9 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl font-normal mb-4">Trusted by Traders</h2>
+          <h2 className="text-5xl font-normal mb-4">Trusted by Investors & Founders</h2>
           <p className="text-muted-foreground text-lg">
-            Join thousands of satisfied traders on CryptoTrade
+            Join the growing community of investors and founders on Avalaunch
           </p>
         </motion.div>
 

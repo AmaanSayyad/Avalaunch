@@ -8,6 +8,7 @@ import LogoCarousel from "@/components/LogoCarousel";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import Footer from "@/components/Footer";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { WalletButton } from "@/components/wallet/WalletButton";
 
 const Index = () => {
   return (
@@ -34,7 +35,7 @@ const Index = () => {
         >
           <span className="text-sm font-medium">
             <Command className="w-4 h-4 inline-block mr-2" />
-            Milestone-based funding for Avalanche projects
+            Milestone-based equity funding for Avalanche projects
           </span>
         </motion.div>
         
@@ -45,7 +46,7 @@ const Index = () => {
             </span>
             <br />
             <span className="text-white font-medium">
-              <TextGenerateEffect words="with milestone governance" />
+              <TextGenerateEffect words="with milestone-based equity" />
             </span>
           </h1>
           
@@ -55,8 +56,8 @@ const Index = () => {
             transition={{ delay: 0.4 }}
             className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl text-left"
           >
-            Discover and fund innovative Avalanche ecosystem projects through milestone-based equity funding. Vote on project progress and watch your investments grow.{" "}
-            <span className="text-white">Join the future of decentralized funding.</span>
+            Discover and fund innovative Avalanche ecosystem projects through milestone-based equity funding. Vote on milestone completion and release funds only when projects deliver.{" "}
+            <span className="text-white">Secure investments with community governance.</span>
           </motion.p>
           
           <motion.div
@@ -65,11 +66,14 @@ const Index = () => {
             transition={{ delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 items-start"
           >
-            <Button size="lg" className="button-gradient">
+            <Button size="lg" className="button-gradient" onClick={() => window.location.href = "/explore"}>
               Explore Projects
             </Button>
             <Button size="lg" variant="link" className="text-white">
-              Submit Project <ArrowRight className="ml-2 w-4 h-4" />
+              Submit Your Project <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="text-white border-white/20">
+              For Investors
             </Button>
           </motion.div>
         </div>
@@ -125,15 +129,21 @@ const Index = () => {
           className="bg-[#0A0A0A]/80 backdrop-blur-lg border border-white/10 rounded-2xl p-8 md:p-12 text-center relative z-10"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to fund the future?
+            Ready to fund the future of Avalanche?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join the Avalanche ecosystem and support innovative projects through milestone-based funding.
+            Join Avalaunch and support innovative projects through milestone-based equity funding with community governance.
           </p>
-          <Button size="lg" className="button-gradient">
-            Connect Wallet
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <WalletButton 
+              size="lg" 
+              variant="default"
+              className="button-gradient"
+            />
+            <Button size="lg" variant="outline" className="border-white/20">
+              Submit Your Project
+            </Button>
+          </div>
         </motion.div>
       </section>
 
