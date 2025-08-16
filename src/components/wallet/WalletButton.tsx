@@ -11,13 +11,14 @@ import {
 import { WalletConnect } from "./WalletConnect";
 import { Wallet, User, LogOut, Copy, ExternalLink, ChevronDown } from "lucide-react";
 
-interface WalletButtonProps {
+export interface WalletButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
   variant?: "default" | "outline" | "secondary" | "destructive" | "ghost" | "link";
   className?: string;
+  onConnect?: () => void;
 }
 
-export function WalletButton({ size = "default", variant = "outline", className = "" }: WalletButtonProps) {
+export function WalletButton({ size = "default", variant = "outline", className = "", onConnect }: WalletButtonProps) {
   const [connected, setConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
@@ -29,6 +30,11 @@ export function WalletButton({ size = "default", variant = "outline", className 
     setWalletAddress(shortenedAddress);
     setBalance("125.45 AVAX");
     setConnected(true);
+    
+    // Call the onConnect callback if provided
+    if (onConnect) {
+      onConnect();
+    }
   };
   
   const handleDisconnect = () => {

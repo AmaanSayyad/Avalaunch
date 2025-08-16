@@ -42,7 +42,7 @@ const Navigation = () => {
 
   const navItems = [
     { name: "Explore Projects", href: "/explore", onClick: () => window.location.href = "/explore" },
-    { name: "Create Project", href: "#create", onClick: () => scrollToSection('create') },
+    { name: "Create Project", href: "/create-project", onClick: () => window.location.href = "/create-project" },
     { name: "Governance", href: "/governance", onClick: () => window.location.href = "/governance" },
     { name: "How It Works", href: "#features", onClick: () => scrollToSection('features') },
     { name: "For Investors", href: "#for-investors", onClick: () => scrollToSection('for-investors') },
