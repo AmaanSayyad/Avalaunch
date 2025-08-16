@@ -1,11 +1,31 @@
 import React from "react";
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, ReactNode } from "react";
+import { BrowserProvider, JsonRpcSigner } from "ethers";
 
-export const SignerContext = createContext(null);
+interface SignerContextType {
+  signer: JsonRpcSigner | null;
+  setSigner: React.Dispatch<React.SetStateAction<JsonRpcSigner | null>>;
+  provider: BrowserProvider | null;
+  setProvider: React.Dispatch<React.SetStateAction<BrowserProvider | null>>;
+}
 
-export const SignerProvider = ({ children }) => {
-  const [signer, setSigner] = useState();
-  const [provider, setProvider] = useState();
+const defaultContext: SignerContextType = {
+  signer: null,
+  setSigner: () => {},
+  provider: null,
+  setProvider: () => {},
+};
+
+export const SignerContext = createContext<SignerContextType>(defaultContext);
+
+interface SignerProviderProps {
+  children: ReactNode;
+}
+
+export const SignerProvider = ({ children }: SignerProviderProps) => {
+  const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  
   return (
     <SignerContext.Provider
       value={{ signer, setSigner, provider, setProvider }}

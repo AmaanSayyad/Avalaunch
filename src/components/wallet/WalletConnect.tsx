@@ -9,14 +9,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Wallet, ChevronRight, X } from "lucide-react";
-import { Connector, useConnect } from "wagmi";
-import { ethers } from "ethers";
-import { BrowserProvider, parseUnits } from "ethers";
+import { useConnect } from "wagmi";
+import { BrowserProvider } from "ethers";
 import { useContext } from "react";
 import { SignerContext } from "@/context/signerContext";
-
-// Import from a specific export
-import { HDNodeWallet } from "ethers/wallet";
 
 interface WalletOption {
   id: string;
@@ -107,36 +103,55 @@ export function WalletConnect({
     }
   };
 
-  const connectWallet = async () => {
-    let signer = null;
+  const { connectors, connect, status, error: connectError } = useConnect();
 
-    let provider;
-    if (window.ethereum == null) {
-      console.log("MetaMask not installed; using read-only defaults");
-      provider = ethers.getDefaultProvider();
-      setProvider(provider);
-    } else {
-      provider = new ethers.BrowserProvider(window.ethereum);
-
-      signer = await provider.getSigner();
-
-      setSigner(signer);
+  const connectWallet = async (walletId: string) => {
+    try {
+      // Find the connector for this wallet
+      const connector = connectors.find(c => c.id.toLowerCase() === walletId.toLowerCase());
+      
+      if (!connector) {
+        throw new Error(`No connector found for ${walletId}`);
+      }
+      
+      // Connect using wagmi
+      connect({ connector });
+      
+      // For backward compatibility, also update our SignerContext
+      if (window.ethereum) {
+        const provider = new BrowserProvider(window.ethereum);
+        setProvider(provider);
+        
+        try {
+          const signer = await provider.getSigner();
+          setSigner(signer);
+          
+          if (onConnect) {
+            onConnect(walletId);
+          }
+          setOpen(false);
+        } catch (err) {
+          console.error("Failed to get signer:", err);
+          setError("Failed to connect wallet. Please try again.");
+        }
+      }
+    } catch (err) {
+      console.error("Connection error:", err);
+      setError(err instanceof Error ? err.message : "Failed to connect wallet");
     }
   };
-
-  console.log({ signer: signer.address });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children || (
         <Button
-          onClick={connectWallet}
+          onClick={() => setOpen(true)}
           variant={variant}
           size={size}
           className={className}
         >
           <Wallet className="w-4 h-4 mr-2" />
-          {signer ? signer.address : "Connect Wallet"}
+          {signer ? `${signer.address.substring(0, 6)}...${signer.address.substring(signer.address.length - 4)}` : "Connect Wallet"}
         </Button>
       )}
       <DialogContent className="sm:max-w-md bg-black/90 backdrop-blur-lg border-white/10">
@@ -159,7 +174,11 @@ export function WalletConnect({
               <button
                 key={wallet.id}
                 className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/10 hover:border-white/20 transition-all"
-                onClick={() => connectWallet()}
+                onClick={() => {
+                  setSelectedWallet(wallet);
+                  setConnecting(true);
+                  connectWallet(wallet.id);
+                }}
               >
                 <div className="flex items-center gap-3">
                   <img
