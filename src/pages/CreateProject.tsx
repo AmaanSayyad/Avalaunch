@@ -9,10 +9,15 @@ import TokenEconomicsForm from "../components/projects/TokenEconomicsForm";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { WalletButton } from "@/components/wallet/WalletButton";
+import { useContext } from "react";
+import { ContractContext } from "@/context/contractContext";
+import { WalletContext } from "@/context/walletContext";
 
 type Step = "project" | "milestones" | "tokenomics" | "review";
 
 const CreateProject = () => {
+  const { createProject } = useContext(ContractContext);
+  const { signer } = useContext(WalletContext);
   const [currentStep, setCurrentStep] = useState<Step>("project");
   const [projectData, setProjectData] = useState({
     name: "",
@@ -29,10 +34,10 @@ const CreateProject = () => {
       telegram: "",
       discord: "",
       github: "",
-      website: ""
-    }
+      website: "",
+    },
   });
-  
+
   const [tokenEconomics, setTokenEconomics] = useState({
     hasToken: false,
     tokenName: "",
@@ -46,7 +51,7 @@ const CreateProject = () => {
       percentage: number;
       lockupPeriod: string;
       vestingSchedule: string;
-    }[]
+    }[],
   });
   const [milestones, setMilestones] = useState<
     {
@@ -71,7 +76,11 @@ const CreateProject = () => {
   const handleNextStep = () => {
     if (currentStep === "project") {
       // Validate project data
-      if (!projectData.name || !projectData.description || !projectData.fundingGoal) {
+      if (
+        !projectData.name ||
+        !projectData.description ||
+        !projectData.fundingGoal
+      ) {
         toast({
           title: "Missing Information",
           description: "Please fill in all required project details",
@@ -90,9 +99,12 @@ const CreateProject = () => {
         });
         return;
       }
-      
+
       // Check if milestone funding percentages add up to 100%
-      const totalPercentage = milestones.reduce((sum, milestone) => sum + milestone.fundingPercentage, 0);
+      const totalPercentage = milestones.reduce(
+        (sum, milestone) => sum + milestone.fundingPercentage,
+        0
+      );
       if (totalPercentage !== 100) {
         toast({
           title: "Invalid Milestone Allocation",
@@ -101,12 +113,17 @@ const CreateProject = () => {
         });
         return;
       }
-      
+
       setCurrentStep("tokenomics");
     } else if (currentStep === "tokenomics") {
       // Validate token economics if user has chosen to have a token
       if (tokenEconomics.hasToken) {
-        if (!tokenEconomics.tokenName || !tokenEconomics.tokenSymbol || !tokenEconomics.tokenType || !tokenEconomics.totalSupply) {
+        if (
+          !tokenEconomics.tokenName ||
+          !tokenEconomics.tokenSymbol ||
+          !tokenEconomics.tokenType ||
+          !tokenEconomics.totalSupply
+        ) {
           toast({
             title: "Missing Token Information",
             description: "Please fill in all required token details",
@@ -114,10 +131,13 @@ const CreateProject = () => {
           });
           return;
         }
-        
+
         // Check if token allocations add up to 100% if any allocations exist
         if (tokenEconomics.tokenAllocations.length > 0) {
-          const totalAllocation = tokenEconomics.tokenAllocations.reduce((sum, allocation) => sum + allocation.percentage, 0);
+          const totalAllocation = tokenEconomics.tokenAllocations.reduce(
+            (sum, allocation) => sum + allocation.percentage,
+            0
+          );
           if (totalAllocation !== 100) {
             toast({
               title: "Invalid Token Allocation",
@@ -128,7 +148,7 @@ const CreateProject = () => {
           }
         }
       }
-      
+
       setCurrentStep("review");
     }
   };
@@ -142,7 +162,7 @@ const CreateProject = () => {
       setCurrentStep("tokenomics");
     }
   };
-  
+
   const handleTokenEconomicsChange = (data: typeof tokenEconomics) => {
     setTokenEconomics(data);
   };
@@ -156,25 +176,40 @@ const CreateProject = () => {
       });
       return;
     }
+    // string memory projectDataIPFS,
+    // address projectOwnerAddress,
+    // uint256 fundingRequired,
+    // uint256 fundingRaiseDeadline,
+    // uint256 projectOwnerProfitPercent
+
+    console.log(projectData);
+
+    createProject(JSON.stringify(projectData), signer.address, projectData.fundingGoal, );
+    // data.ipfs,
+    // signer.address,
+    // data.fundingRequired,
+    // data.fundingRaiseDeadline,
+    // data.projectOwnerProfitPercent
 
     // Here you would integrate with your smart contract
-    try {
-      toast({
-        title: "Project Submitted",
-        description: "Your project has been submitted successfully!",
-      });
-      
-      // Redirect to founder dashboard after successful submission
-      setTimeout(() => {
-        window.location.href = "/founder-dashboard";
-      }, 2000);
-    } catch (error) {
-      toast({
-        title: "Submission Failed",
-        description: "There was an error submitting your project. Please try again.",
-        variant: "destructive",
-      });
-    }
+    // try {
+    //   toast({
+    //     title: "Project Submitted",
+    //     description: "Your project has been submitted successfully!",
+    //   });
+
+    //   // Redirect to founder dashboard after successful submission
+    //   setTimeout(() => {
+    //     window.location.href = "/founder-dashboard";
+    //   }, 2000);
+    // } catch (error) {
+    //   toast({
+    //     title: "Submission Failed",
+    //     description:
+    //       "There was an error submitting your project. Please try again.",
+    //     variant: "destructive",
+    //   });
+    // }
   };
 
   const renderStepIndicator = () => {
@@ -182,49 +217,73 @@ const CreateProject = () => {
       <div className="flex items-center justify-center mb-8">
         <div className="flex items-center">
           {/* Step 1: Project Details */}
-          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
-            currentStep === "project" ? "bg-primary text-white" : "bg-primary/20 text-primary"
-          }`}>
+          <div
+            className={`rounded-full h-10 w-10 flex items-center justify-center ${
+              currentStep === "project"
+                ? "bg-primary text-white"
+                : "bg-primary/20 text-primary"
+            }`}
+          >
             1
           </div>
-          
+
           {/* Connector */}
-          <div className={`h-1 w-12 ${
-            currentStep === "project" ? "bg-gray-600" : "bg-primary"
-          }`}></div>
-          
+          <div
+            className={`h-1 w-12 ${
+              currentStep === "project" ? "bg-gray-600" : "bg-primary"
+            }`}
+          ></div>
+
           {/* Step 2: Milestones */}
-          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
-            currentStep === "milestones" ? "bg-primary text-white" : 
-            currentStep === "tokenomics" || currentStep === "review" ? "bg-primary/20 text-primary" : 
-            "bg-gray-800 text-gray-400"
-          }`}>
+          <div
+            className={`rounded-full h-10 w-10 flex items-center justify-center ${
+              currentStep === "milestones"
+                ? "bg-primary text-white"
+                : currentStep === "tokenomics" || currentStep === "review"
+                ? "bg-primary/20 text-primary"
+                : "bg-gray-800 text-gray-400"
+            }`}
+          >
             2
           </div>
-          
+
           {/* Connector */}
-          <div className={`h-1 w-12 ${
-            currentStep === "project" || currentStep === "milestones" ? "bg-gray-600" : "bg-primary"
-          }`}></div>
-          
+          <div
+            className={`h-1 w-12 ${
+              currentStep === "project" || currentStep === "milestones"
+                ? "bg-gray-600"
+                : "bg-primary"
+            }`}
+          ></div>
+
           {/* Step 3: Token Economics */}
-          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
-            currentStep === "tokenomics" ? "bg-primary text-white" : 
-            currentStep === "review" ? "bg-primary/20 text-primary" : 
-            "bg-gray-800 text-gray-400"
-          }`}>
+          <div
+            className={`rounded-full h-10 w-10 flex items-center justify-center ${
+              currentStep === "tokenomics"
+                ? "bg-primary text-white"
+                : currentStep === "review"
+                ? "bg-primary/20 text-primary"
+                : "bg-gray-800 text-gray-400"
+            }`}
+          >
             3
           </div>
-          
+
           {/* Connector */}
-          <div className={`h-1 w-12 ${
-            currentStep === "review" ? "bg-primary" : "bg-gray-600"
-          }`}></div>
-          
+          <div
+            className={`h-1 w-12 ${
+              currentStep === "review" ? "bg-primary" : "bg-gray-600"
+            }`}
+          ></div>
+
           {/* Step 4: Review */}
-          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
-            currentStep === "review" ? "bg-primary text-white" : "bg-gray-800 text-gray-400"
-          }`}>
+          <div
+            className={`rounded-full h-10 w-10 flex items-center justify-center ${
+              currentStep === "review"
+                ? "bg-primary text-white"
+                : "bg-gray-800 text-gray-400"
+            }`}
+          >
             4
           </div>
         </div>
@@ -235,11 +294,26 @@ const CreateProject = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case "project":
-        return <ProjectForm projectData={projectData} onChange={handleProjectDataChange} />;
+        return (
+          <ProjectForm
+            projectData={projectData}
+            onChange={handleProjectDataChange}
+          />
+        );
       case "milestones":
-        return <MilestoneForm milestones={milestones} onChange={handleMilestonesChange} />;
+        return (
+          <MilestoneForm
+            milestones={milestones}
+            onChange={handleMilestonesChange}
+          />
+        );
       case "tokenomics":
-        return <TokenEconomicsForm tokenEconomics={tokenEconomics} onChange={handleTokenEconomicsChange} />;
+        return (
+          <TokenEconomicsForm
+            tokenEconomics={tokenEconomics}
+            onChange={handleTokenEconomicsChange}
+          />
+        );
       case "review":
         return (
           <div className="space-y-8">
@@ -270,38 +344,66 @@ const CreateProject = () => {
                   <p className="text-gray-400 mb-1">Tags</p>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {projectData.tags.map((tag, index) => (
-                      <span key={index} className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                      <span
+                        key={index}
+                        className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+                      >
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="md:col-span-2">
                   <p className="text-gray-400 mb-1">Social Media & Links</p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-1">
                     {projectData.socialMedia.website && (
-                      <a href={projectData.socialMedia.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 text-sm flex items-center gap-1">
+                      <a
+                        href={projectData.socialMedia.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center gap-1"
+                      >
                         <span>🌐</span> Website
                       </a>
                     )}
                     {projectData.socialMedia.github && (
-                      <a href={projectData.socialMedia.github} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 text-sm flex items-center gap-1">
+                      <a
+                        href={projectData.socialMedia.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center gap-1"
+                      >
                         <span>💻</span> GitHub
                       </a>
                     )}
                     {projectData.socialMedia.twitter && (
-                      <a href={projectData.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 text-sm flex items-center gap-1">
+                      <a
+                        href={projectData.socialMedia.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center gap-1"
+                      >
                         <span>🐦</span> Twitter
                       </a>
                     )}
                     {projectData.socialMedia.discord && (
-                      <a href={projectData.socialMedia.discord} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 text-sm flex items-center gap-1">
+                      <a
+                        href={projectData.socialMedia.discord}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center gap-1"
+                      >
                         <span>💬</span> Discord
                       </a>
                     )}
                     {projectData.socialMedia.telegram && (
-                      <a href={projectData.socialMedia.telegram} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 text-sm flex items-center gap-1">
+                      <a
+                        href={projectData.socialMedia.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-primary/80 text-sm flex items-center gap-1"
+                      >
                         <span>✈️</span> Telegram
                       </a>
                     )}
@@ -309,12 +411,15 @@ const CreateProject = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="glass rounded-xl border border-white/10 p-6">
               <h3 className="text-xl font-medium mb-4">Milestones</h3>
               <div className="space-y-4">
                 {milestones.map((milestone, index) => (
-                  <div key={index} className="border border-white/10 rounded-lg p-4 bg-black/30">
+                  <div
+                    key={index}
+                    className="border border-white/10 rounded-lg p-4 bg-black/30"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium">
                         Milestone {index + 1}: {milestone.title}
@@ -323,9 +428,13 @@ const CreateProject = () => {
                         {milestone.fundingPercentage}% of funds
                       </span>
                     </div>
-                    <p className="text-gray-300 text-sm mb-2">{milestone.description}</p>
+                    <p className="text-gray-300 text-sm mb-2">
+                      {milestone.description}
+                    </p>
                     <div className="mt-2">
-                      <p className="text-gray-400 text-xs mb-1">Deliverables:</p>
+                      <p className="text-gray-400 text-xs mb-1">
+                        Deliverables:
+                      </p>
                       <ul className="list-disc list-inside text-sm text-gray-300">
                         {milestone.deliverables.map((deliverable, i) => (
                           <li key={i}>{deliverable}</li>
@@ -339,7 +448,7 @@ const CreateProject = () => {
                 ))}
               </div>
             </div>
-            
+
             {tokenEconomics.hasToken && (
               <div className="glass rounded-xl border border-white/10 p-6">
                 <h3 className="text-xl font-medium mb-4">Token Economics</h3>
@@ -362,32 +471,45 @@ const CreateProject = () => {
                   </div>
                   <div>
                     <p className="text-gray-400 mb-1">Initial Price</p>
-                    <p className="text-white">{tokenEconomics.initialPrice} AVAX</p>
+                    <p className="text-white">
+                      {tokenEconomics.initialPrice} AVAX
+                    </p>
                   </div>
                 </div>
-                
+
                 {tokenEconomics.tokenAllocations.length > 0 && (
                   <div className="mt-6">
                     <p className="text-gray-400 mb-3">Token Allocation</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {tokenEconomics.tokenAllocations.map((allocation, index) => (
-                        <div key={index} className="bg-black/30 border border-white/10 rounded-lg p-3">
-                          <div className="flex justify-between items-center mb-1">
-                            <p className="font-medium">{allocation.category}</p>
-                            <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
-                              {allocation.percentage}%
-                            </span>
+                      {tokenEconomics.tokenAllocations.map(
+                        (allocation, index) => (
+                          <div
+                            key={index}
+                            className="bg-black/30 border border-white/10 rounded-lg p-3"
+                          >
+                            <div className="flex justify-between items-center mb-1">
+                              <p className="font-medium">
+                                {allocation.category}
+                              </p>
+                              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                                {allocation.percentage}%
+                              </span>
+                            </div>
+                            <div className="flex gap-4 text-xs text-gray-400">
+                              <span>
+                                Lockup: {allocation.lockupPeriod || "None"}
+                              </span>
+                              <span>
+                                Vesting: {allocation.vestingSchedule || "None"}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex gap-4 text-xs text-gray-400">
-                            <span>Lockup: {allocation.lockupPeriod || "None"}</span>
-                            <span>Vesting: {allocation.vestingSchedule || "None"}</span>
-                          </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   </div>
                 )}
-                
+
                 {tokenEconomics.tokenUtility && (
                   <div className="mt-6">
                     <p className="text-gray-400 mb-1">Token Utility</p>
@@ -396,30 +518,37 @@ const CreateProject = () => {
                 )}
               </div>
             )}
-            
+
             <div className="glass rounded-xl border border-white/10 p-6">
-              <h3 className="text-xl font-medium mb-4">Submission Requirements</h3>
+              <h3 className="text-xl font-medium mb-4">
+                Submission Requirements
+              </h3>
               <p className="text-gray-300 mb-4">
                 By submitting this project, you agree to the following:
               </p>
               <ul className="list-disc list-inside text-sm text-gray-300 space-y-2">
                 <li>You are the authorized representative of this project</li>
                 <li>All information provided is accurate and complete</li>
-                <li>You understand that funds will only be released upon milestone completion approval</li>
+                <li>
+                  You understand that funds will only be released upon milestone
+                  completion approval
+                </li>
                 <li>You agree to Avalaunch's terms and conditions</li>
               </ul>
-              
+
               <div className="mt-6">
                 {!isWalletConnected ? (
                   <div className="text-center">
-                    <p className="text-gray-300 mb-4">Connect your wallet to submit your project</p>
-                    <WalletButton 
+                    <p className="text-gray-300 mb-4">
+                      Connect your wallet to submit your project
+                    </p>
+                    <WalletButton
                       onConnect={() => setIsWalletConnected(true)}
                       className="button-gradient mx-auto"
                     />
                   </div>
                 ) : (
-                  <Button 
+                  <Button
                     onClick={handleSubmit}
                     className="button-gradient w-full"
                     size="lg"
@@ -447,33 +576,35 @@ const CreateProject = () => {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl md:text-5xl font-normal mb-4 tracking-tight text-center">
-              <span className="text-white font-medium">Create Your Project</span>
+              <span className="text-white font-medium">
+                Create Your Project
+              </span>
             </h1>
             <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto">
-              Launch your project on Avalaunch with milestone-based funding. Set clear goals, define milestones, and receive funding as you deliver.
+              Launch your project on Avalaunch with milestone-based funding. Set
+              clear goals, define milestones, and receive funding as you
+              deliver.
             </p>
 
             {renderStepIndicator()}
 
-            <div className="mt-8">
-              {renderStepContent()}
-            </div>
+            <div className="mt-8">{renderStepContent()}</div>
 
             <div className="mt-8 flex justify-between">
               {currentStep !== "project" && (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handlePreviousStep}
                   className="border-white/10 hover:bg-white/5"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" /> Previous
                 </Button>
               )}
-              
+
               {currentStep !== "project" && <div></div>}
-              
+
               {currentStep !== "review" ? (
-                <Button 
+                <Button
                   onClick={handleNextStep}
                   className="button-gradient ml-auto"
                 >
