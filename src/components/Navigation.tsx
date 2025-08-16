@@ -40,9 +40,10 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { name: "Features", href: "#features", onClick: () => scrollToSection('features') },
-    { name: "Prices", href: "#pricing", onClick: () => scrollToSection('pricing') },
-    { name: "Testimonials", href: "#testimonials", onClick: () => scrollToSection('testimonials') },
+    { name: "Explore Projects", href: "#projects", onClick: () => scrollToSection('projects') },
+    { name: "Create Project", href: "#create", onClick: () => scrollToSection('create') },
+    { name: "Governance", href: "#governance", onClick: () => scrollToSection('governance') },
+    { name: "How It Works", href: "#how-it-works", onClick: () => scrollToSection('how-it-works') },
   ];
 
   return (
@@ -57,7 +58,7 @@ const Navigation = () => {
         <nav className="flex items-center justify-between h-full">
           <div className="flex items-center gap-2">
             <Command className="w-5 h-5 text-primary" />
-            <span className="font-bold text-base">CryptoTrade</span>
+            <span className="font-bold text-base">AvaFund</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -77,13 +78,18 @@ const Navigation = () => {
                 {item.name}
               </a>
             ))}
-            <Button 
-              onClick={() => scrollToSection('cta')}
-              size="sm"
-              className="button-gradient"
-            >
-              Start Trading
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="text-sm">
+                Dashboard
+              </Button>
+              <Button 
+                onClick={() => scrollToSection('cta')}
+                size="sm"
+                className="button-gradient"
+              >
+                Connect Wallet
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -112,15 +118,25 @@ const Navigation = () => {
                       {item.name}
                     </a>
                   ))}
-                  <Button 
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      scrollToSection('cta');
-                    }}
-                    className="button-gradient mt-4"
-                  >
-                    Start Trading
-                  </Button>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      Dashboard
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        scrollToSection('cta');
+                      }}
+                      className="button-gradient"
+                    >
+                      Connect Wallet
+                    </Button>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
