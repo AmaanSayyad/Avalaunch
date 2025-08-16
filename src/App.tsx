@@ -6,8 +6,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useNavigate,
-  useLocation,
 } from "react-router-dom";
 import Index from "./pages/Index";
 import ExploreProjects from "./pages/ExploreProjects";
@@ -19,7 +17,8 @@ import Governance from "./pages/Governance";
 import CreateProject from "./pages/CreateProject";
 import { config } from "./WalletConnect";
 import { WagmiProvider } from "wagmi";
-import { useState } from "react";
+import { ContractProvider } from "./context/contractContext";
+import { WalletProvider } from "./context/walletContext";
 
 const queryClient = new QueryClient();
 
@@ -27,33 +26,37 @@ const App = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <div className="min-h-screen bg-background">
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/explore" element={<ExploreProjects />} />
-                <Route path="/projects/:id" element={<ProjectDetail />} />
-                <Route
-                  path="/investor-dashboard"
-                  element={<InvestorDashboard />}
-                />
-                <Route
-                  path="/founder-dashboard"
-                  element={<FounderProjectsList />}
-                />
-                <Route
-                  path="/founder-dashboard/project/:id"
-                  element={<FounderDashboard />}
-                />
-                <Route path="/governance" element={<Governance />} />
-                <Route path="/create-project" element={<CreateProject />} />
-              </Routes>
-            </BrowserRouter>
-          </div>
-        </TooltipProvider>
+        <WalletProvider>
+          <ContractProvider>
+            <TooltipProvider>
+              <div className="min-h-screen bg-background">
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/explore" element={<ExploreProjects />} />
+                    <Route path="/projects/:id" element={<ProjectDetail />} />
+                    <Route
+                      path="/investor-dashboard"
+                      element={<InvestorDashboard />}
+                    />
+                    <Route
+                      path="/founder-dashboard"
+                      element={<FounderProjectsList />}
+                    />
+                    <Route
+                      path="/founder-dashboard/project/:id"
+                      element={<FounderDashboard />}
+                    />
+                    <Route path="/governance" element={<Governance />} />
+                    <Route path="/create-project" element={<CreateProject />} />
+                  </Routes>
+                </BrowserRouter>
+              </div>
+            </TooltipProvider>
+          </ContractProvider>
+        </WalletProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
