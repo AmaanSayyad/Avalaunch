@@ -45,7 +45,7 @@ const Navigation = () => {
     { name: "Create Project", href: "#create", onClick: () => scrollToSection('create') },
     { name: "Governance", href: "/governance", onClick: () => window.location.href = "/governance" },
     { name: "How It Works", href: "#features", onClick: () => scrollToSection('features') },
-    { name: "Funding Options", href: "#funding-options", onClick: () => scrollToSection('funding-options') },
+    { name: "For Investors", href: "#for-investors", onClick: () => scrollToSection('for-investors') },
   ];
 
   return (
