@@ -34,6 +34,11 @@ interface ProjectData {
   whitepaper: string;
   team: TeamMember[];
   socialMedia: SocialMedia;
+  revenueSharing: {
+    investorPercentage: string;
+    founderPercentage: string;
+    description: string;
+  };
 }
 
 interface ProjectFormProps {

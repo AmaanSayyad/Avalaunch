@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import ProjectForm from "../components/projects/ProjectForm";
 import MilestoneForm from "../components/projects/MilestoneForm";
 import TokenEconomicsForm from "../components/projects/TokenEconomicsForm";
+import RevenueShareForm from "../components/projects/RevenueShareForm";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { WalletButton } from "@/components/wallet/WalletButton";
@@ -13,7 +14,7 @@ import { useContext } from "react";
 import { ContractContext } from "@/context/contractContext";
 import { WalletContext } from "@/context/walletContext";
 
-type Step = "project" | "milestones" | "tokenomics" | "review";
+type Step = "project" | "milestones" | "tokenomics" | "revenue" | "review";
 
 const CreateProject = () => {
   const { createProject } = useContext(ContractContext);
@@ -34,8 +35,13 @@ const CreateProject = () => {
       telegram: "",
       discord: "",
       github: "",
-      website: "",
+      website: ""
     },
+    revenueSharing: {
+      investorPercentage: "50",
+      founderPercentage: "50",
+      description: ""
+    }
   });
 
   const [tokenEconomics, setTokenEconomics] = useState({
@@ -148,7 +154,31 @@ const CreateProject = () => {
           }
         }
       }
-
+      
+      setCurrentStep("revenue");
+    } else if (currentStep === "revenue") {
+      // Validate revenue sharing
+      const investorPercentage = parseInt(projectData.revenueSharing.investorPercentage);
+      const founderPercentage = parseInt(projectData.revenueSharing.founderPercentage);
+      
+      if (isNaN(investorPercentage) || isNaN(founderPercentage)) {
+        toast({
+          title: "Invalid Revenue Sharing",
+          description: "Please set valid percentages for revenue sharing",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (investorPercentage + founderPercentage !== 100) {
+        toast({
+          title: "Invalid Revenue Allocation",
+          description: "Revenue sharing percentages must add up to 100%",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       setCurrentStep("review");
     }
   };
@@ -158,11 +188,20 @@ const CreateProject = () => {
       setCurrentStep("project");
     } else if (currentStep === "tokenomics") {
       setCurrentStep("milestones");
-    } else if (currentStep === "review") {
+    } else if (currentStep === "revenue") {
       setCurrentStep("tokenomics");
+    } else if (currentStep === "review") {
+      setCurrentStep("revenue");
     }
   };
-
+  
+  const handleRevenueChange = (data: typeof projectData.revenueSharing) => {
+    setProjectData({
+      ...projectData,
+      revenueSharing: data
+    });
+  };
+  
   const handleTokenEconomicsChange = (data: typeof tokenEconomics) => {
     setTokenEconomics(data);
   };
@@ -184,7 +223,13 @@ const CreateProject = () => {
 
     console.log(projectData);
 
-    createProject(JSON.stringify(projectData), signer.address, projectData.fundingGoal, );
+    createProject(
+      JSON.stringify(projectData), 
+      signer.address, 
+      projectData.fundingGoal,
+      // Add the founder's revenue percentage from the revenue sharing model
+      projectData.revenueSharing.founderPercentage
+    );
     // data.ipfs,
     // signer.address,
     // data.fundingRequired,
@@ -228,63 +273,57 @@ const CreateProject = () => {
           </div>
 
           {/* Connector */}
-          <div
-            className={`h-1 w-12 ${
-              currentStep === "project" ? "bg-gray-600" : "bg-primary"
-            }`}
-          ></div>
-
+          <div className={`h-1 w-10 ${
+            currentStep === "project" ? "bg-gray-600" : "bg-primary"
+          }`}></div>
+          
           {/* Step 2: Milestones */}
-          <div
-            className={`rounded-full h-10 w-10 flex items-center justify-center ${
-              currentStep === "milestones"
-                ? "bg-primary text-white"
-                : currentStep === "tokenomics" || currentStep === "review"
-                ? "bg-primary/20 text-primary"
-                : "bg-gray-800 text-gray-400"
-            }`}
-          >
+          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
+            currentStep === "milestones" ? "bg-primary text-white" : 
+            currentStep === "tokenomics" || currentStep === "revenue" || currentStep === "review" ? "bg-primary/20 text-primary" : 
+            "bg-gray-800 text-gray-400"
+          }`}>
             2
           </div>
 
           {/* Connector */}
-          <div
-            className={`h-1 w-12 ${
-              currentStep === "project" || currentStep === "milestones"
-                ? "bg-gray-600"
-                : "bg-primary"
-            }`}
-          ></div>
-
+          <div className={`h-1 w-10 ${
+            currentStep === "project" || currentStep === "milestones" ? "bg-gray-600" : "bg-primary"
+          }`}></div>
+          
           {/* Step 3: Token Economics */}
-          <div
-            className={`rounded-full h-10 w-10 flex items-center justify-center ${
-              currentStep === "tokenomics"
-                ? "bg-primary text-white"
-                : currentStep === "review"
-                ? "bg-primary/20 text-primary"
-                : "bg-gray-800 text-gray-400"
-            }`}
-          >
+          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
+            currentStep === "tokenomics" ? "bg-primary text-white" : 
+            currentStep === "revenue" || currentStep === "review" ? "bg-primary/20 text-primary" : 
+            "bg-gray-800 text-gray-400"
+          }`}>
             3
           </div>
 
           {/* Connector */}
-          <div
-            className={`h-1 w-12 ${
-              currentStep === "review" ? "bg-primary" : "bg-gray-600"
-            }`}
-          ></div>
-
-          {/* Step 4: Review */}
-          <div
-            className={`rounded-full h-10 w-10 flex items-center justify-center ${
-              currentStep === "review"
-                ? "bg-primary text-white"
-                : "bg-gray-800 text-gray-400"
-            }`}
-          >
+          <div className={`h-1 w-10 ${
+            currentStep === "project" || currentStep === "milestones" || currentStep === "tokenomics" ? "bg-gray-600" : "bg-primary"
+          }`}></div>
+          
+          {/* Step 4: Revenue Sharing */}
+          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
+            currentStep === "revenue" ? "bg-primary text-white" : 
+            currentStep === "review" ? "bg-primary/20 text-primary" : 
+            "bg-gray-800 text-gray-400"
+          }`}>
             4
+          </div>
+
+          {/* Connector */}
+          <div className={`h-1 w-10 ${
+            currentStep === "review" ? "bg-primary" : "bg-gray-600"
+          }`}></div>
+          
+          {/* Step 5: Review */}
+          <div className={`rounded-full h-10 w-10 flex items-center justify-center ${
+            currentStep === "review" ? "bg-primary text-white" : "bg-gray-800 text-gray-400"
+          }`}>
+            5
           </div>
         </div>
       </div>
@@ -308,12 +347,9 @@ const CreateProject = () => {
           />
         );
       case "tokenomics":
-        return (
-          <TokenEconomicsForm
-            tokenEconomics={tokenEconomics}
-            onChange={handleTokenEconomicsChange}
-          />
-        );
+        return <TokenEconomicsForm tokenEconomics={tokenEconomics} onChange={handleTokenEconomicsChange} />;
+      case "revenue":
+        return <RevenueShareForm revenueSharing={projectData.revenueSharing} onChange={handleRevenueChange} />;
       case "review":
         return (
           <div className="space-y-8">
@@ -518,11 +554,29 @@ const CreateProject = () => {
                 )}
               </div>
             )}
-
+            
             <div className="glass rounded-xl border border-white/10 p-6">
-              <h3 className="text-xl font-medium mb-4">
-                Submission Requirements
-              </h3>
+              <h3 className="text-xl font-medium mb-4">Revenue Sharing</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-gray-400 mb-1">Investor Share</p>
+                  <p className="text-white">{projectData.revenueSharing.investorPercentage}%</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 mb-1">Founder Share</p>
+                  <p className="text-white">{projectData.revenueSharing.founderPercentage}%</p>
+                </div>
+                {projectData.revenueSharing.description && (
+                  <div className="md:col-span-2">
+                    <p className="text-gray-400 mb-1">Description</p>
+                    <p className="text-white">{projectData.revenueSharing.description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="glass rounded-xl border border-white/10 p-6">
+              <h3 className="text-xl font-medium mb-4">Submission Requirements</h3>
               <p className="text-gray-300 mb-4">
                 By submitting this project, you agree to the following:
               </p>
