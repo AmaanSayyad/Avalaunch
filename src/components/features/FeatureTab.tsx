@@ -37,7 +37,7 @@ export const FeatureTab = ({ icon, title, description, isActive }: FeatureTabPro
           <h3 className={`font-semibold truncate text-base ${isActive ? 'text-primary' : ''}`}>
             {title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-sm text-muted-foreground">
             {description}
           </p>
         </div>

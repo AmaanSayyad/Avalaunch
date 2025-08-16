@@ -47,31 +47,31 @@ function VoteIcon(props: any) {
 export const features = [
   {
     title: "Milestone-Based Funding",
-    description: "Projects define clear milestones with deliverables. Funds are released only when milestones are completed and approved by investors.",
+    description: "Projects set clear milestones with specific deliverables. Funds are released only after each milestone is completed and approved by investors.",
     icon: <MilestoneIcon className="w-6 h-6" />,
     image: "/lovable-uploads/86329743-ee49-4f2e-96f7-50508436273d.png"
   },
   {
     title: "Community Governance",
-    description: "Investors vote on milestone completion. Funds are released only when 50% or more investors approve the milestone deliverables.",
+    description: "Investors participate in milestone approval by voting. Funds are unlocked only when a majority of investors approve the milestone deliverables.",
     icon: <VoteIcon className="w-6 h-6" />,
     image: "/lovable-uploads/7335619d-58a9-41ad-a233-f7826f56f3e9.png"
   },
   {
     title: "Equity Ownership",
-    description: "Receive equity in promising Avalanche projects. Track your portfolio and project progress in a comprehensive dashboard.",
+    description: "Invest in promising Avalanche projects and receive equity. Easily track your portfolio and project progress in a unified dashboard.",
     icon: <Wallet className="w-6 h-6" />,
     image: "/lovable-uploads/b6436838-5c1a-419a-9cdc-1f9867df073d.png"
   },
   {
     title: "Project Analytics",
-    description: "Detailed analytics on project progress, milestone completion rates, and funding statistics to help you make informed investment decisions.",
+    description: "Access detailed analytics on project progress, milestone completion, and funding to make informed investment decisions.",
     icon: <BarChart3 className="w-6 h-6" />,
     image: "/lovable-uploads/79f2b901-8a4e-42a5-939f-fae0828e0aef.png"
   },
   {
     title: "Avalanche Ecosystem",
-    description: "Exclusively focused on Avalanche projects, integrating with Core.app to bring the best projects to our funding platform.",
+    description: "Focused exclusively on Avalanche projects, with seamless Core.app integration to bring top projects to our platform.",
     icon: <Users className="w-6 h-6" />,
     image: "/lovable-uploads/a2c0bb3a-a47b-40bf-ba26-d79f2f9e741b.png"
   }

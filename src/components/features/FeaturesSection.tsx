@@ -1,6 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FeatureTab } from "./FeatureTab";
-import { FeatureContent } from "./FeatureContent";
+import { motion } from "framer-motion";
 import { features } from "@/config/features";
 
 export const FeaturesSection = () => {
@@ -18,45 +16,43 @@ export const FeaturesSection = () => {
         </p>
       </div>
 
-      <Tabs defaultValue={features[0].title} className="w-full">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
-          {/* Left side - Tab triggers */}
-          <div className="md:col-span-5 space-y-3">
-            <TabsList className="flex flex-col w-full bg-transparent h-auto p-0 space-y-3">
-              {features.map((feature) => (
-                <TabsTrigger
-                  key={feature.title}
-                  value={feature.title}
-                  className="w-full data-[state=active]:shadow-none data-[state=active]:bg-transparent"
-                >
-                  <FeatureTab
-                    title={feature.title}
-                    description={feature.description}
-                    icon={feature.icon}
-                    isActive={false}
-                  />
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          {/* Right side - Tab content with images */}
-          <div className="md:col-span-7">
-            {features.map((feature) => (
-              <TabsContent
-                key={feature.title}
-                value={feature.title}
-                className="mt-0 h-full"
-              >
-                <FeatureContent
-                  image={feature.image}
-                  title={feature.title}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {features.map((feature) => (
+          <motion.div
+            key={feature.title}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+            className="glass rounded-xl border border-white/10 hover:border-primary/30 transition-all duration-300 h-full flex flex-col"
+          >
+            {/* Card Header */}
+            <div className="p-6 border-b border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-medium">{feature.title}</h3>
+              </div>
+            </div>
+            
+            {/* Card Body */}
+            <div className="p-6 flex-grow">
+              <p className="text-gray-300 mb-6">
+                {feature.description}
+              </p>
+              
+              <div className="mt-auto">
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="rounded-lg w-full h-auto border border-white/10"
                 />
-              </TabsContent>
-            ))}
-          </div>
-        </div>
-      </Tabs>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </section>
   );
 };

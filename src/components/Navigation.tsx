@@ -45,7 +45,7 @@ const Navigation = () => {
     { name: "Create Project", href: "#create", onClick: () => scrollToSection('create') },
     { name: "Governance", href: "/governance", onClick: () => window.location.href = "/governance" },
     { name: "How It Works", href: "#features", onClick: () => scrollToSection('features') },
-    { name: "For Investors", href: "#for-investors", onClick: () => scrollToSection('for-investors') },
+    { name: "Funding Options", href: "#funding-options", onClick: () => scrollToSection('funding-options') },
   ];
 
   return (
@@ -58,7 +58,10 @@ const Navigation = () => {
     >
       <div className="container mx-auto h-20 px-6">
         <nav className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer" 
+            onClick={() => window.location.href = "/"}
+          >
             <div className="bg-primary/20 p-2 rounded-lg">
               <Command className="w-5 h-5 text-primary" />
             </div>
@@ -119,7 +122,13 @@ const Navigation = () => {
               </SheetTrigger>
               <SheetContent className="bg-black/95 backdrop-blur-xl border-l border-white/10">
                 <div className="flex flex-col gap-6 mt-12">
-                  <div className="flex items-center gap-3 mb-6">
+                  <div 
+                    className="flex items-center gap-3 mb-6 cursor-pointer"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      window.location.href = "/";
+                    }}
+                  >
                     <div className="bg-primary/20 p-2 rounded-lg">
                       <Command className="w-5 h-5 text-primary" />
                     </div>

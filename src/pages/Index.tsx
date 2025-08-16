@@ -3,7 +3,7 @@ import { ArrowRight, Command } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navigation from "@/components/Navigation";
 import { FeaturesSection } from "@/components/features/FeaturesSection";
-import { PricingSection } from "@/components/pricing/PricingSection";
+import { FundingOptionsSection } from "@/components/funding/FundingOptionsSection";
 import LogoCarousel from "@/components/LogoCarousel";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import Footer from "@/components/Footer";
@@ -102,9 +102,9 @@ const Index = () => {
         <FeaturesSection />
       </div>
 
-      {/* Pricing Section */}
-      <div id="pricing" className="bg-black">
-        <PricingSection />
+      {/* Funding Options Section */}
+      <div id="funding-options" className="bg-black">
+        <FundingOptionsSection />
       </div>
 
       {/* Testimonials Section */}
