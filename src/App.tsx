@@ -20,7 +20,6 @@ import CreateProject from "./pages/CreateProject";
 import { config } from "./WalletConnect";
 import { WagmiProvider } from "wagmi";
 import { useState } from "react";
-import { SignerProvider } from "./context/signerContext";
 
 const queryClient = new QueryClient();
 
@@ -28,13 +27,12 @@ const App = () => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <SignerProvider>
-          <TooltipProvider>
-            <div className="min-h-screen bg-background">
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
+        <TooltipProvider>
+          <div className="min-h-screen bg-background">
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/explore" element={<ExploreProjects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
@@ -55,8 +53,7 @@ const App = () => {
               </Routes>
             </BrowserRouter>
           </div>
-          </TooltipProvider>
-        </SignerProvider>
+        </TooltipProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

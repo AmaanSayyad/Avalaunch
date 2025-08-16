@@ -1,9 +1,9 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { SignerProvider } from "./context/signerContext.tsx";
+import { WalletProvider } from "./context/walletContext.tsx";
 createRoot(document.getElementById("root")!).render(
-  <SignerProvider>
+  <WalletProvider>
     <App />
-  </SignerProvider>
+  </WalletProvider>
 );

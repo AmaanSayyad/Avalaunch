@@ -12,8 +12,8 @@ import { Wallet, ChevronRight, X } from "lucide-react";
 import { useConnect } from "wagmi";
 import { BrowserProvider } from "ethers";
 import { useContext } from "react";
-import { SignerContext } from "@/context/signerContext";
-
+import { WalletContext } from "@/context/walletContext";
+import { ethers } from "ethers";
 interface WalletOption {
   id: string;
   name: string;
@@ -75,7 +75,8 @@ export function WalletConnect({
     null
   );
   const [error, setError] = useState<string | null>(null);
-  const { signer, setSigner, setProvider } = useContext(SignerContext);
+
+  const { setSigner, signer, setProvider } = useContext(WalletContext);
 
   const handleConnect = async (wallet: WalletOption) => {
     setSelectedWallet(wallet);
@@ -105,39 +106,69 @@ export function WalletConnect({
 
   const { connectors, connect, status, error: connectError } = useConnect();
 
-  const connectWallet = async (walletId: string) => {
+  const connectWallet = async () => {
+    // let signer = null;
+
+    // let provider;
+    // if (window.ethereum == null) {
+    //   console.log("MetaMask not installed; using read-only defaults");
+    //   provider = ethers.getDefaultProvider();
+    //   setProvider(provider);
+    // } else {
+    //   provider = new ethers.BrowserProvider(window.ethereum);
+
+    //   signer = await provider.getSigner();
+    //   setSigner(signer);
+    // }
+
     try {
-      // Find the connector for this wallet
-      const connector = connectors.find(c => c.id.toLowerCase() === walletId.toLowerCase());
-      
-      if (!connector) {
-        throw new Error(`No connector found for ${walletId}`);
-      }
-      
-      // Connect using wagmi
-      connect({ connector });
-      
-      // For backward compatibility, also update our SignerContext
-      if (window.ethereum) {
-        const provider = new BrowserProvider(window.ethereum);
+      if (!window.ethereum) {
+        console.log("MetaMask not installed; using read-only defaults");
+        const provider = ethers.getDefaultProvider();
         setProvider(provider);
-        
-        try {
-          const signer = await provider.getSigner();
-          setSigner(signer);
-          
-          if (onConnect) {
-            onConnect(walletId);
-          }
-          setOpen(false);
-        } catch (err) {
-          console.error("Failed to get signer:", err);
-          setError("Failed to connect wallet. Please try again.");
+        return;
+      }
+
+      // Try switching to Avalanche Fuji Testnet
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0xA869" }], // Fuji Testnet
+        });
+      } catch (switchError) {
+        // If chain not added, add it
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0xA869",
+                chainName: "Avalanche Fuji C-Chain",
+                nativeCurrency: {
+                  name: "Avalanche",
+                  symbol: "AVAX",
+                  decimals: 18,
+                },
+                rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+                blockExplorerUrls: ["https://testnet.snowtrace.io/"],
+              },
+            ],
+          });
+        } else {
+          throw switchError;
         }
       }
-    } catch (err) {
-      console.error("Connection error:", err);
-      setError(err instanceof Error ? err.message : "Failed to connect wallet");
+
+      // Once network is set → connect
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      setProvider(provider);
+      setSigner(signer);
+
+      console.log("Connected address:", await signer.getAddress());
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
     }
   };
 
@@ -145,13 +176,13 @@ export function WalletConnect({
     <Dialog open={open} onOpenChange={setOpen}>
       {children || (
         <Button
-          onClick={() => setOpen(true)}
+          onClick={() => connectWallet()}
           variant={variant}
           size={size}
           className={className}
         >
           <Wallet className="w-4 h-4 mr-2" />
-          {signer ? `${signer.address.substring(0, 6)}...${signer.address.substring(signer.address.length - 4)}` : "Connect Wallet"}
+          {signer ? signer.address : "Connect Wallet"}
         </Button>
       )}
       <DialogContent className="sm:max-w-md bg-black/90 backdrop-blur-lg border-white/10">
