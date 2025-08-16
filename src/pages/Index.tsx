@@ -69,7 +69,7 @@ const Index = () => {
             <Button size="lg" className="button-gradient" onClick={() => window.location.href = "/explore"}>
               Explore Projects
             </Button>
-            <Button size="lg" variant="link" className="text-white">
+            <Button size="lg" variant="link" className="text-white" onClick={() => window.location.href = "/create-project"}>
               Submit Your Project <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
             <Button size="lg" variant="outline" className="text-white border-white/20">
@@ -137,7 +137,7 @@ const Index = () => {
               variant="default"
               className="button-gradient"
             />
-            <Button size="lg" variant="outline" className="border-white/20">
+            <Button size="lg" variant="outline" className="border-white/20" onClick={() => window.location.href = "/create-project"}>
               Submit Your Project
             </Button>
           </div>

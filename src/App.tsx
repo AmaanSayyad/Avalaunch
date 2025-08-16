@@ -10,6 +10,7 @@ import InvestorDashboard from "./pages/InvestorDashboard";
 import FounderDashboard from "./pages/FounderDashboard";
 import FounderProjectsList from "./pages/FounderProjectsList";
 import Governance from "./pages/Governance";
+import CreateProject from "./pages/CreateProject";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/founder-dashboard" element={<FounderProjectsList />} />
             <Route path="/founder-dashboard/project/:id" element={<FounderDashboard />} />
             <Route path="/governance" element={<Governance />} />
+            <Route path="/create-project" element={<CreateProject />} />
           </Routes>
         </BrowserRouter>
       </div>

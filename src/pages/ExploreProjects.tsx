@@ -46,7 +46,7 @@ const ExploreProjects = () => {
             <Button size="lg" className="button-gradient">
               Connect Wallet to Invest
             </Button>
-            <Button size="lg" variant="outline" className="border-white/20">
+            <Button size="lg" variant="outline" className="border-white/20" onClick={() => window.location.href = "/create-project"}>
               Submit Your Project <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </motion.div>
@@ -79,7 +79,7 @@ const ExploreProjects = () => {
             Submit your project to Avalaunch and connect with investors who believe in the Avalanche ecosystem.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="button-gradient">
+            <Button size="lg" className="button-gradient" onClick={() => window.location.href = "/create-project"}>
               Submit Project
               <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
