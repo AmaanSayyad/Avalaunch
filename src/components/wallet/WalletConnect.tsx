@@ -14,6 +14,13 @@ import { BrowserProvider } from "ethers";
 import { useContext } from "react";
 import { WalletContext } from "@/context/walletContext";
 import { ethers } from "ethers";
+
+// Helper function to shorten addresses consistently
+const shortenAddress = (address: string): string => {
+  if (!address) return "";
+  return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+};
+
 interface WalletOption {
   id: string;
   name: string;
@@ -116,7 +123,7 @@ export function WalletConnect({
     //   setProvider(provider);
     // } else {
     //   provider = new ethers.BrowserProvider(window.ethereum);
-
+    //
     //   signer = await provider.getSigner();
     //   setSigner(signer);
     // }
@@ -173,6 +180,9 @@ export function WalletConnect({
     }
   };
 
+  // Get the address from signer and format it
+  const signerAddress = signer ? shortenAddress(signer.address || "") : "Connect Wallet";
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children || (
@@ -183,7 +193,7 @@ export function WalletConnect({
           className={className}
         >
           <Wallet className="w-4 h-4 mr-2" />
-          {signer ? signer.address : "Connect Wallet"}
+          {signerAddress}
         </Button>
       )}
       <DialogContent className="sm:max-w-md bg-black/90 backdrop-blur-lg border-white/10">
