@@ -258,7 +258,7 @@ const FounderProjectsList = () => {
             <div className="max-w-md mx-auto bg-black/40 backdrop-blur-lg border border-white/10 rounded-xl p-8">
               <h3 className="text-xl font-medium mb-4">Create your first project</h3>
               <p className="text-gray-300 mb-6">
-                Get started by creating your first project on Avalaunch and connect with investors in the Avalanche ecosystem.
+                Get started by creating your first project on BuildnFund and connect with investors in the Avalanche ecosystem.
               </p>
               <Button className="button-gradient">
                 <Plus className="w-4 h-4 mr-2" /> Create Project

@@ -7,9 +7,7 @@ export const FeaturesSection = () => {
       {/* Header Section */}
       <div className="max-w-2xl mb-20">
         <h2 className="text-5xl md:text-6xl font-normal mb-6 tracking-tight text-left">
-          How Avalaunch
-          <br />
-          <span className="text-gradient font-medium">Works For You</span>
+          How <span className="text-gradient">BuildnFund</span> Works
         </h2>
         <p className="text-lg md:text-xl text-gray-400 text-left">
           Our milestone-based equity funding platform ensures transparency, accountability, and successful project delivery for the Avalanche ecosystem.

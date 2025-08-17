@@ -75,8 +75,8 @@ const ExploreProjects = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Have a project idea for Avalanche?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Submit your project to Avalaunch and connect with investors who believe in the Avalanche ecosystem.
+          <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
+            Submit your project to BuildnFund and connect with investors who believe in the Avalanche ecosystem.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="button-gradient" onClick={() => window.location.href = "/create-project"}>

@@ -128,8 +128,8 @@ const Index = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to fund the future of Avalanche?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join Avalaunch and support innovative projects through milestone-based equity funding with community governance.
+          <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
+            Join BuildnFund and support innovative projects through milestone-based equity funding with community governance.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <WalletButton 

@@ -70,7 +70,7 @@ export const features = [
     image: "/lovable-uploads/79f2b901-8a4e-42a5-939f-fae0828e0aef.png"
   },
   {
-    title: "Avalanche Ecosystem",
+    title: "BuildnFund",
     description: "Focused exclusively on Avalanche projects, with seamless Core.app integration to bring top projects to our platform.",
     icon: <Users className="w-6 h-6" />,
     image: "/lovable-uploads/a2c0bb3a-a47b-40bf-ba26-d79f2f9e741b.png"

@@ -8,9 +8,9 @@ const Footer = () => {
         <div className="glass glass-hover rounded-xl p-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-4">
-              <h3 className="font-medium text-lg">Avalaunch</h3>
-              <p className="text-sm text-muted-foreground">
-                Empowering the Avalanche ecosystem with milestone-based equity funding.
+              <h3 className="font-medium text-lg">BuildnFund</h3>
+              <p className="text-gray-400 max-w-xs">
+                The premier milestone-based funding platform for the Avalanche ecosystem, connecting innovative founders with strategic investors.
               </p>
               <div className="flex space-x-4">
                 <Button variant="ghost" size="icon">
@@ -81,9 +81,9 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-white/10">
-            <p className="text-sm text-muted-foreground text-center">
-              © {new Date().getFullYear()} Avalaunch. All rights reserved.
+          <div className="mt-8 pt-8 border-t border-gray-800">
+            <p className="text-center text-gray-400">
+              © {new Date().getFullYear()} BuildnFund. All rights reserved.
             </p>
           </div>
         </div>

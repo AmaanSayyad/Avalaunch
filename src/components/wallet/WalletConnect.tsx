@@ -94,7 +94,7 @@ export function WalletConnect({
         <DialogHeader>
           <DialogTitle>Connect Wallet</DialogTitle>
           <DialogDescription>
-            Connect your MetaMask wallet to interact with Avalaunch
+            Connect your MetaMask wallet to interact with BuildnFund
           </DialogDescription>
         </DialogHeader>
 

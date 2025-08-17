@@ -631,7 +631,7 @@ const CreateProject = () => {
                   You understand that funds will only be released upon milestone
                   completion approval
                 </li>
-                <li>You agree to Avalaunch's terms and conditions</li>
+                <li>You agree to BuildnFund's terms and conditions</li>
               </ul>
 
               <div className="mt-6">
@@ -667,7 +667,7 @@ const CreateProject = () => {
               </span>
             </h1>
             <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto">
-              Launch your project on Avalaunch with milestone-based funding. Set
+              Launch your project on BuildnFund with milestone-based funding. Set
               clear goals, define milestones, and receive funding as you
               deliver.
             </p>

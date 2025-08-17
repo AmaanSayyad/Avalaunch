@@ -57,8 +57,8 @@ const projectData = {
     },
     {
       id: "m2",
-      title: "Core Smart Contract Development",
-      description: "Develop and audit the core smart contracts for the exchange.",
+      title: "Smart Contract Development",
+      description: "Develop and audit the smart contracts for the exchange.",
       fundingAmount: 15000,
       fundingPercentage: 30,
       startDate: "Feb 16, 2023",

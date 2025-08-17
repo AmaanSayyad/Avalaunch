@@ -87,11 +87,11 @@ const HowItWorks = () => {
               className="flex flex-col md:flex-row items-center gap-12"
             >
               <div className="md:w-1/2">
-                <h1 className="text-5xl md:text-6xl font-medium mb-6 tracking-tight leading-tight">
-                  How <span className="text-gradient">Avalaunch</span> Works
+                <h1 className="text-5xl md:text-6xl font-bold text-center mb-8">
+                  How <span className="text-gradient">BuildnFund</span> Works
                 </h1>
-                <p className="text-xl text-gray-300 mb-8">
-                  Avalaunch connects innovative founders with strategic investors through 
+                <p className="text-xl text-gray-400 text-center max-w-4xl mx-auto mb-16">
+                  BuildnFund connects innovative founders with strategic investors through
                   a transparent, milestone-based funding platform built specifically for the Avalanche ecosystem.
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -117,7 +117,7 @@ const HowItWorks = () => {
                         <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       </div>
-                      <div className="text-sm text-gray-400">Avalaunch Flow</div>
+                      <div className="text-sm text-gray-400">BuildnFund Flow</div>
                     </div>
                     <pre className="text-sm text-gray-300 font-mono overflow-x-auto">
                       <code>{`// Milestone-based funding flow
@@ -159,7 +159,7 @@ function createProject(details) {
         {/* Platform Overview */}
         <section className="container px-4 mb-24">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-medium mb-12 text-center">The Avalaunch <span className="text-gradient">Advantage</span></h2>
+            <h2 className="text-3xl md:text-4xl font-medium mb-12 text-center">The BuildnFund <span className="text-gradient">Advantage</span></h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -305,12 +305,9 @@ function createProject(details) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <h3 className="text-xl font-medium mb-4 flex items-center">
-                  <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                  How is Avalaunch different?
-                </h3>
-                <p className="text-gray-300">
-                  Avalaunch uses milestone-based funding where money is released only when verified goals are achieved. 
+                <h3 className="text-xl font-semibold mb-4">How is BuildnFund different?</h3>
+                <p className="text-gray-300 mb-6">
+                  BuildnFund uses milestone-based funding where money is released only when verified goals are achieved.
                   This creates accountability for founders and reduces risk for investors. Additionally, our platform 
                   offers equity and revenue sharing rather than just perks or products.
                 </p>
@@ -322,12 +319,9 @@ function createProject(details) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <h3 className="text-xl font-medium mb-4 flex items-center">
-                  <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                  What projects can be funded?
-                </h3>
-                <p className="text-gray-300">
-                  Avalaunch is specifically designed for projects building on the Avalanche ecosystem. This includes 
+                <h3 className="text-xl font-semibold mb-4">What projects can be funded?</h3>
+                <p className="text-gray-300 mb-6">
+                  BuildnFund is specifically designed for projects building on the Avalanche ecosystem. This includes 
                   DeFi protocols, NFT platforms, GameFi projects, infrastructure tools, and other blockchain applications 
                   that leverage Avalanche's technology.
                 </p>
@@ -339,11 +333,8 @@ function createProject(details) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <h3 className="text-xl font-medium mb-4 flex items-center">
-                  <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                  How are milestones verified?
-                </h3>
-                <p className="text-gray-300">
+                <h3 className="text-xl font-semibold mb-4">How are milestones verified?</h3>
+                <p className="text-gray-300 mb-6">
                   Project founders submit evidence of milestone completion including code repositories, demos, documentation, 
                   or other deliverables. Investors then review these submissions and vote on whether the milestone has been 
                   successfully completed. A minimum of 50% approval is required to release the funds.
@@ -356,11 +347,8 @@ function createProject(details) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <h3 className="text-xl font-medium mb-4 flex items-center">
-                  <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-                  How is revenue sharing implemented?
-                </h3>
-                <p className="text-gray-300">
+                <h3 className="text-xl font-semibold mb-4">How is revenue sharing implemented?</h3>
+                <p className="text-gray-300 mb-6">
                   Each project defines its own revenue sharing model during the submission process. The founder determines 
                   what percentage of revenue will be shared with investors. When the project generates revenue, the specified 
                   percentage is automatically distributed to investors proportional to their investment amount.
@@ -391,7 +379,7 @@ function createProject(details) {
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   Whether you're a founder looking to launch your project or an investor seeking opportunities 
-                  in the Avalanche ecosystem, Avalaunch provides the platform you need.
+                  in the Avalanche ecosystem, BuildnFund provides the platform you need.
                 </motion.p>
                 <motion.div
                   className="flex flex-wrap gap-4 justify-center"

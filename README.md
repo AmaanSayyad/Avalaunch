@@ -1,4 +1,8 @@
-# Welcome to your Lovable project
+# BuildnFund - Milestone-Based Funding Platform
+
+## Project Overview
+
+BuildnFund is a milestone-based funding platform for the Avalanche ecosystem, where founders can launch projects and receive funding against equity. The platform features community governance with milestone-based fund release upon 50% investor approval.
 
 ## Project info
 
@@ -27,7 +31,7 @@ Follow these steps:
 git clone <YOUR_GIT_URL>
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd buildnfund
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -52,13 +56,15 @@ npm run dev
 
 ## What technologies are used for this project?
 
-This project is built with .
+This project is built with modern web technologies:
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Wagmi & Viem for Web3 integration
+- Ethers.js for blockchain interactions
 
 ## How can I deploy this project?
 

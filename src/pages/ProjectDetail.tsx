@@ -18,7 +18,8 @@ import {
   Twitter,
   MessageSquare,
   Share2,
-  Bookmark
+  Bookmark,
+  CheckCircle
 } from "lucide-react";
 
 // Sample project data
@@ -76,14 +77,14 @@ const projectData = {
     },
     {
       id: "m2",
-      title: "Core Smart Contract Development",
-      description: "Develop and audit the core smart contracts for the exchange.",
+      title: "Smart Contract Development",
+      description: "Develop and audit the smart contracts for the exchange.",
       fundingAmount: 15000,
       fundingPercentage: 30,
       startDate: "Feb 16, 2023",
       endDate: "Apr 30, 2023",
       deliverables: [
-        "AMM core contracts",
+        "AMM contracts",
         "Liquidity pool contracts",
         "Token swap functionality",
         "Security audit report"
@@ -127,7 +128,7 @@ const projectData = {
     {
       date: "Jun 15, 2023",
       title: "Frontend Development Progress Update",
-      content: "We've completed 70% of the frontend development for the DEX. The wallet integration is now working seamlessly with MetaMask, Core, and other popular Avalanche wallets. We're now focusing on the trading interface and charts."
+      content: "We've completed 70% of the frontend development for the DEX. Our project is now working seamlessly with MetaMask, Core, and other popular Avalanche wallets. We're now focusing on the trading interface and charts."
     },
     {
       date: "May 20, 2023",

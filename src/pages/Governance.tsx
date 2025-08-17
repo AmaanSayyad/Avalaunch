@@ -46,7 +46,7 @@ const proposals: ProposalCardProps[] = [
   {
     id: "prop2",
     title: "Platform Fee Adjustment Proposal",
-    description: "Proposal to adjust the platform fee from 2% to 1.5% for all projects to encourage more founders to launch on Avalaunch.",
+    description: "Proposal to adjust the platform fee from 2% to 1.5% for all projects to encourage more founders to launch on BuildnFund.",
     creator: {
       name: "Sarah Chen",
       image: "https://avatars.githubusercontent.com/u/2345678?v=4"
@@ -182,8 +182,8 @@ const Governance = () => {
         <div className="container px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-medium mb-4">Governance</h1>
-            <p className="text-gray-300 text-lg mb-6">
-              Participate in platform and project governance through voting on proposals. Help shape the future of Avalaunch and its projects.
+            <p className="text-lg text-gray-400 mb-8">
+              Participate in platform and project governance through voting on proposals. Help shape the future of BuildnFund and its projects.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="button-gradient">
@@ -402,8 +402,8 @@ const Governance = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Want to create a proposal?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Submit your own governance proposal to improve Avalaunch or help projects reach their milestones.
+          <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+            Submit your own governance proposal to improve BuildnFund or help projects reach their milestones.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="button-gradient">

@@ -109,7 +109,7 @@ const pendingVotes = [
     milestoneNumber: 1,
     deadline: "5 days",
     currentVotes: 38,
-    description: "Develop and audit core lending protocol smart contracts."
+    description: "Develop and audit lending protocol smart contracts."
   },
   {
     id: "vote3",
