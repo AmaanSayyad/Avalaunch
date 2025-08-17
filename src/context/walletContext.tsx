@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useEffect, useCallback } from "react";
+import { createContext, useState, ReactNode, useEffect, useCallback, memo } from "react";
 import { BrowserProvider, JsonRpcSigner } from "ethers";
 
 interface WalletContextType {
@@ -33,7 +33,7 @@ export const WalletContext = createContext<WalletContextType>({
   disconnectWallet: () => {}
 });
 
-export const WalletProvider = ({ children }: { children: ReactNode }) => {
+const WalletProviderComponent = ({ children }: { children: ReactNode }) => {
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -321,3 +321,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     </WalletContext.Provider>
   );
 };
+
+// Export the memoized provider to prevent unnecessary re-renders
+export const WalletProvider = memo(WalletProviderComponent);
