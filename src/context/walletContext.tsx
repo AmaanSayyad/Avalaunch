@@ -46,20 +46,26 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       
       if (savedIsConnected && window.ethereum) {
         try {
-          // Check if we're still authorized
+          // Check if we're still authorized using a simple request
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           
           if (accounts && accounts.length > 0) {
-            // We're still connected
-            const provider = new BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const address = await signer.getAddress();
-            
-            setProvider(provider);
-            setSigner(signer);
-            setWalletAddress(address);
-            setIsConnected(true);
-            console.log("Restored wallet connection:", shortenAddress(address));
+            // We're still connected - create provider and signer
+            try {
+              const provider = new BrowserProvider(window.ethereum);
+              const signer = await provider.getSigner();
+              const address = await signer.getAddress();
+              
+              setProvider(provider);
+              setSigner(signer);
+              setWalletAddress(address);
+              setIsConnected(true);
+              console.log("Restored wallet connection:", shortenAddress(address));
+            } catch (providerError) {
+              console.error("Error creating provider:", providerError);
+              localStorage.removeItem('walletConnected');
+              setIsConnected(false);
+            }
           } else {
             // Authorization revoked
             localStorage.removeItem('walletConnected');
@@ -76,44 +82,6 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     checkConnection();
   }, []);
   
-  // Listen for account changes
-  useEffect(() => {
-    if (window.ethereum && typeof window.ethereum.on === 'function') {
-      const handleAccountsChanged = async (accounts: string[]) => {
-        if (accounts.length === 0) {
-          // User disconnected their wallet
-          disconnectWallet();
-        } else if (isConnected) {
-          // Account changed while connected
-          try {
-            const provider = new BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const address = await signer.getAddress();
-            
-            setProvider(provider);
-            setSigner(signer);
-            setWalletAddress(address);
-            console.log("Account changed:", shortenAddress(address));
-          } catch (error) {
-            console.error("Error handling account change:", error);
-          }
-        }
-      };
-      
-      try {
-        window.ethereum.on('accountsChanged', handleAccountsChanged);
-        
-        return () => {
-          if (typeof window.ethereum.removeListener === 'function') {
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-          }
-        };
-      } catch (error) {
-        console.warn("Could not set up account change listener:", error);
-      }
-    }
-  }, [isConnected]);
-  
   const connectWallet = async () => {
     if (!window.ethereum) {
       console.error("No Ethereum provider found");
@@ -121,54 +89,27 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     }
     
     try {
-      // Request accounts
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      console.log("Starting wallet connection...");
+      
+      // Use a more direct approach - create provider first, then request accounts
+      const provider = new BrowserProvider(window.ethereum);
+      
+      // Request accounts through the provider
+      const accounts = await provider.send("eth_requestAccounts", []);
       
       if (!accounts || accounts.length === 0) {
         throw new Error("No accounts found");
       }
       
-      // Try switching to Avalanche Fuji Testnet
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0xA869" }], // Fuji Testnet
-        });
-      } catch (switchError: any) {
-        // If chain not added, add it
-        if (switchError.code === 4902) {
-          try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: "0xA869",
-                  chainName: "Avalanche Fuji C-Chain",
-                  nativeCurrency: {
-                    name: "Avalanche",
-                    symbol: "AVAX",
-                    decimals: 18,
-                  },
-                  rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
-                  blockExplorerUrls: ["https://testnet.snowtrace.io/"],
-                },
-              ],
-            });
-          } catch (addError) {
-            console.warn("Could not add Avalanche network:", addError);
-            // Continue with connection even if network switch fails
-          }
-        } else {
-          console.warn("Could not switch to Avalanche network:", switchError);
-          // Continue with connection even if network switch fails
-        }
-      }
+      console.log("Accounts received:", accounts);
       
-      // Once network is set → connect
-      const provider = new BrowserProvider(window.ethereum);
+      // Create signer
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
       
+      console.log("Provider and signer created successfully");
+      
+      // Set state
       setProvider(provider);
       setSigner(signer);
       setWalletAddress(address);
@@ -177,7 +118,41 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       // Save connection state
       localStorage.setItem('walletConnected', 'true');
       
-      console.log("Connected to wallet:", shortenAddress(address));
+      console.log("Wallet connected successfully:", shortenAddress(address));
+      
+      // Try to switch to Avalanche network (optional, don't fail if it doesn't work)
+      try {
+        console.log("Attempting to switch to Avalanche network...");
+        await provider.send("wallet_switchEthereumChain", [{ chainId: "0xA869" }]);
+        console.log("Successfully switched to Avalanche network");
+      } catch (switchError: any) {
+        console.log("Could not switch to Avalanche network:", switchError.message);
+        
+        // If chain not added, try to add it
+        if (switchError.code === 4902) {
+          try {
+            console.log("Adding Avalanche network...");
+            await provider.send("wallet_addEthereumChain", [
+              {
+                chainId: "0xA869",
+                chainName: "Avalanche Fuji C-Chain",
+                nativeCurrency: {
+                  name: "Avalanche",
+                  symbol: "AVAX",
+                  decimals: 18,
+                },
+                rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+                blockExplorerUrls: ["https://testnet.snowtrace.io/"],
+              },
+            ]);
+            console.log("Successfully added Avalanche network");
+          } catch (addError) {
+            console.log("Could not add Avalanche network:", addError);
+            // Continue with connection even if network setup fails
+          }
+        }
+      }
+      
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       disconnectWallet();
