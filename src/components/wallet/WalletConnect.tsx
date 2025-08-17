@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,17 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Wallet, ChevronRight, X } from "lucide-react";
-import { useConnect } from "wagmi";
-import { BrowserProvider } from "ethers";
-import { useContext } from "react";
-import { WalletContext } from "@/context/walletContext";
-import { ethers } from "ethers";
-
-// Helper function to shorten addresses consistently
-const shortenAddress = (address: string): string => {
-  if (!address) return "";
-  return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
-};
+import { WalletContext, shortenAddress } from "@/context/walletContext";
 
 interface WalletOption {
   id: string;
@@ -78,12 +68,10 @@ export function WalletConnect({
 }: WalletConnectProps) {
   const [open, setOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(
-    null
-  );
+  const [selectedWallet, setSelectedWallet] = useState<WalletOption | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { setSigner, signer, setProvider } = useContext(WalletContext);
+  const { connectWallet, isConnected, walletAddress } = useContext(WalletContext);
 
   const handleConnect = async (wallet: WalletOption) => {
     setSelectedWallet(wallet);
@@ -91,19 +79,13 @@ export function WalletConnect({
     setError(null);
 
     try {
-      // Simulate wallet connection
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock connection success
-      if (wallet.id === "core" || wallet.id === "metamask") {
-        if (onConnect) {
-          onConnect(wallet.id);
-        }
-        setOpen(false);
-      } else {
-        // Mock connection error for other wallets
-        throw new Error("Connection failed. Please try again.");
+      await connectWallet();
+      
+      if (onConnect) {
+        onConnect(wallet.id);
       }
+      
+      setOpen(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to connect wallet");
     } finally {
@@ -111,89 +93,19 @@ export function WalletConnect({
     }
   };
 
-  const { connectors, connect, status, error: connectError } = useConnect();
-
-  const connectWallet = async () => {
-    // let signer = null;
-
-    // let provider;
-    // if (window.ethereum == null) {
-    //   console.log("MetaMask not installed; using read-only defaults");
-    //   provider = ethers.getDefaultProvider();
-    //   setProvider(provider);
-    // } else {
-    //   provider = new ethers.BrowserProvider(window.ethereum);
-    //
-    //   signer = await provider.getSigner();
-    //   setSigner(signer);
-    // }
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    try {
-      if (!window.ethereum) {
-        console.log("MetaMask not installed; using read-only defaults");
-        const provider = ethers.getDefaultProvider();
-        setProvider(provider);
-        return;
-      }
-
-      // Try switching to Avalanche Fuji Testnet
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0xA869" }], // Fuji Testnet
-        });
-      } catch (switchError) {
-        // If chain not added, add it
-        if (switchError.code === 4902) {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0xA869",
-                chainName: "Avalanche Fuji C-Chain",
-                nativeCurrency: {
-                  name: "Avalanche",
-                  symbol: "AVAX",
-                  decimals: 18,
-                },
-                rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
-                blockExplorerUrls: ["https://testnet.snowtrace.io/"],
-              },
-            ],
-          });
-        } else {
-          throw switchError;
-        }
-      }
-
-      // Once network is set → connect
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      setProvider(provider);
-      setSigner(signer);
-
-      console.log("Connected address:", await signer.getAddress());
-    } catch (error) {
-      console.error("Failed to connect wallet:", error);
-    }
-  };
-
-  // Get the address from signer and format it
-  const signerAddress = signer ? shortenAddress(signer.address || "") : "Connect Wallet";
+  const displayAddress = walletAddress ? shortenAddress(walletAddress) : "Connect Wallet";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children || (
         <Button
-          onClick={() => connectWallet()}
+          onClick={() => setOpen(true)}
           variant={variant}
           size={size}
           className={className}
         >
           <Wallet className="w-4 h-4 mr-2" />
-          {signerAddress}
+          {isConnected ? displayAddress : "Connect Wallet"}
         </Button>
       )}
       <DialogContent className="sm:max-w-md bg-black/90 backdrop-blur-lg border-white/10">
@@ -216,11 +128,7 @@ export function WalletConnect({
               <button
                 key={wallet.id}
                 className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/10 hover:border-white/20 transition-all"
-                onClick={() => {
-                  setSelectedWallet(wallet);
-                  setConnecting(true);
-                  connectWallet(wallet.id);
-                }}
+                onClick={() => handleConnect(wallet)}
               >
                 <div className="flex items-center gap-3">
                   <img

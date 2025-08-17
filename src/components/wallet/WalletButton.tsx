@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { WalletConnect } from "./WalletConnect";
 import { Wallet, User, LogOut, Copy, ExternalLink, ChevronDown } from "lucide-react";
+import { WalletContext, shortenAddress } from "@/context/walletContext";
 
 export interface WalletButtonProps {
   size?: "default" | "sm" | "lg" | "icon";
@@ -18,42 +19,36 @@ export interface WalletButtonProps {
   onConnect?: () => void;
 }
 
-// Helper function to shorten addresses consistently
-const shortenAddress = (address: string): string => {
-  if (!address) return "";
-  return `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
-};
-
 export function WalletButton({ size = "default", variant = "outline", className = "", onConnect }: WalletButtonProps) {
-  const [connected, setConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [fullAddress, setFullAddress] = useState<string | null>(null);
-  const [balance, setBalance] = useState<string | null>(null);
+  const { 
+    isConnected, 
+    walletAddress, 
+    disconnectWallet,
+    connectWallet
+  } = useContext(WalletContext);
   
-  const handleConnect = (walletId: string) => {
-    // Mock wallet connection
-    const mockAddress = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
-    setFullAddress(mockAddress);
-    setWalletAddress(shortenAddress(mockAddress));
-    setBalance("125.45 AVAX");
-    setConnected(true);
-    
-    // Call the onConnect callback if provided
-    if (onConnect) {
-      onConnect();
+  const [balance, setBalance] = useState<string | null>("125.45 AVAX"); // Mock balance
+  
+  const handleConnect = async () => {
+    try {
+      await connectWallet();
+      
+      // Call the onConnect callback if provided
+      if (onConnect) {
+        onConnect();
+      }
+    } catch (error) {
+      console.error("Error in handleConnect:", error);
     }
   };
   
   const handleDisconnect = () => {
-    setConnected(false);
-    setWalletAddress(null);
-    setFullAddress(null);
-    setBalance(null);
+    disconnectWallet();
   };
   
   const handleCopyAddress = () => {
-    if (fullAddress) {
-      navigator.clipboard.writeText(fullAddress)
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress)
         .then(() => {
           alert("Address copied to clipboard!");
         })
@@ -65,31 +60,35 @@ export function WalletButton({ size = "default", variant = "outline", className 
   };
   
   const handleViewOnExplorer = () => {
-    // In a real implementation, open the explorer with the wallet address
-    if (fullAddress) {
-      window.open(`https://subnets.avax.network/address/${fullAddress}`, "_blank");
+    if (walletAddress) {
+      window.open(`https://subnets.avax.network/address/${walletAddress}`, "_blank");
     } else {
       window.open("https://subnets.avax.network/", "_blank");
     }
   };
   
-  if (!connected) {
+  if (!isConnected) {
     return (
-      <WalletConnect 
-        onConnect={handleConnect} 
+      <Button 
+        onClick={handleConnect}
         variant={variant} 
         size={size} 
         className={className}
-      />
+      >
+        <Wallet className="w-4 h-4 mr-2" />
+        Connect Wallet
+      </Button>
     );
   }
+  
+  const displayAddress = walletAddress ? shortenAddress(walletAddress) : "";
   
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size={size} className={className}>
           <Wallet className="w-4 h-4 mr-2 flex-shrink-0" />
-          {walletAddress}
+          {displayAddress}
           <ChevronDown className="w-4 h-4 ml-2 flex-shrink-0" />
         </Button>
       </DropdownMenuTrigger>
@@ -97,7 +96,7 @@ export function WalletButton({ size = "default", variant = "outline", className 
         <DropdownMenuLabel>
           <div className="flex flex-col">
             <span>Wallet</span>
-            <span className="text-sm font-normal text-gray-400 truncate">{fullAddress}</span>
+            <span className="text-sm font-normal text-gray-400 truncate">{walletAddress}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />
