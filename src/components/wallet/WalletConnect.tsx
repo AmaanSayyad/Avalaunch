@@ -120,6 +120,7 @@ export function WalletConnect({
     //   signer = await provider.getSigner();
     //   setSigner(signer);
     // }
+    await window.ethereum.request({ method: "eth_requestAccounts" });
 
     try {
       if (!window.ethereum) {
