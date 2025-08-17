@@ -78,7 +78,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   
   // Listen for account changes
   useEffect(() => {
-    if (window.ethereum) {
+    if (window.ethereum && typeof window.ethereum.on === 'function') {
       const handleAccountsChanged = async (accounts: string[]) => {
         if (accounts.length === 0) {
           // User disconnected their wallet
@@ -100,23 +100,33 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         }
       };
       
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      
-      return () => {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-      };
+      try {
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        
+        return () => {
+          if (typeof window.ethereum.removeListener === 'function') {
+            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+          }
+        };
+      } catch (error) {
+        console.warn("Could not set up account change listener:", error);
+      }
     }
   }, [isConnected]);
   
   const connectWallet = async () => {
     if (!window.ethereum) {
       console.error("No Ethereum provider found");
-      return;
+      throw new Error("No Ethereum provider found. Please install MetaMask or another wallet.");
     }
     
     try {
       // Request accounts
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      
+      if (!accounts || accounts.length === 0) {
+        throw new Error("No accounts found");
+      }
       
       // Try switching to Avalanche Fuji Testnet
       try {
@@ -127,24 +137,30 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       } catch (switchError: any) {
         // If chain not added, add it
         if (switchError.code === 4902) {
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0xA869",
-                chainName: "Avalanche Fuji C-Chain",
-                nativeCurrency: {
-                  name: "Avalanche",
-                  symbol: "AVAX",
-                  decimals: 18,
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0xA869",
+                  chainName: "Avalanche Fuji C-Chain",
+                  nativeCurrency: {
+                    name: "Avalanche",
+                    symbol: "AVAX",
+                    decimals: 18,
+                  },
+                  rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+                  blockExplorerUrls: ["https://testnet.snowtrace.io/"],
                 },
-                rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
-                blockExplorerUrls: ["https://testnet.snowtrace.io/"],
-              },
-            ],
-          });
+              ],
+            });
+          } catch (addError) {
+            console.warn("Could not add Avalanche network:", addError);
+            // Continue with connection even if network switch fails
+          }
         } else {
-          throw switchError;
+          console.warn("Could not switch to Avalanche network:", switchError);
+          // Continue with connection even if network switch fails
         }
       }
       
