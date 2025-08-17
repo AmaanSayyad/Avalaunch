@@ -67,17 +67,17 @@ export function WalletButton({ size = "default", variant = "outline", className 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={variant} size={size} className={className}>
-          <Wallet className="w-4 h-4 mr-2" />
-          {walletAddress}
-          <ChevronDown className="w-4 h-4 ml-2" />
+        <Button variant={variant} size={size} className={`${className} max-w-[160px] truncate`}>
+          <Wallet className="w-4 h-4 mr-2 flex-shrink-0" />
+          <span className="truncate">{walletAddress}</span>
+          <ChevronDown className="w-4 h-4 ml-2 flex-shrink-0" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-black/90 backdrop-blur-lg border-white/10">
         <DropdownMenuLabel>
           <div className="flex flex-col">
             <span>Wallet</span>
-            <span className="text-sm font-normal text-gray-400">{walletAddress}</span>
+            <span className="text-sm font-normal text-gray-400 truncate">{walletAddress}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-white/10" />

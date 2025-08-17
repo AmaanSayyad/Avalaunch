@@ -87,32 +87,39 @@ const Navigation = () => {
               ))}
             </div>
             <div className="flex items-center gap-3 border-l border-white/10 pl-6">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-sm hover:bg-white/5"
-                onClick={() => window.location.href = "/investor-dashboard"}
-              >
-                Investor Dashboard
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-sm hover:bg-white/5"
-                onClick={() => window.location.href = "/founder-dashboard"}
-              >
-                Founder Dashboard
-              </Button>
-              <WalletButton 
-                size="sm"
-                variant="default"
-                className="button-gradient"
-              />
+              <div className="flex items-center space-x-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-sm hover:bg-white/5 whitespace-nowrap"
+                  onClick={() => window.location.href = "/investor-dashboard"}
+                >
+                  Investor Dashboard
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-sm hover:bg-white/5 whitespace-nowrap"
+                  onClick={() => window.location.href = "/founder-dashboard"}
+                >
+                  Founder Dashboard
+                </Button>
+                <WalletButton 
+                  size="sm"
+                  variant="default"
+                  className="button-gradient"
+                />
+              </div>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center">
+            <WalletButton 
+              size="sm"
+              variant="default"
+              className="button-gradient mr-3"
+            />
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="bg-white/5 border border-white/10 hover:bg-white/10">
@@ -173,13 +180,6 @@ const Navigation = () => {
                     >
                       Founder Dashboard
                     </Button>
-                  </div>
-                  
-                  <div className="mt-auto pt-6">
-                    <WalletButton 
-                      variant="default"
-                      className="button-gradient w-full"
-                    />
                   </div>
                 </div>
               </SheetContent>
