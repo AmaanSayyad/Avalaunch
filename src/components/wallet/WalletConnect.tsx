@@ -20,28 +20,10 @@ interface WalletOption {
 
 const walletOptions: WalletOption[] = [
   {
-    id: "core",
-    name: "Core",
-    icon: "/lovable-uploads/0dbe1b75-2c74-4ff8-ba55-4be4d74abe72.png",
-    description: "Connect to your Core wallet",
-  },
-  {
     id: "metamask",
     name: "MetaMask",
     icon: "/lovable-uploads/7cc724d4-3e14-4e7c-9e7a-8d613fde54d0.png",
     description: "Connect to your MetaMask wallet",
-  },
-  {
-    id: "coinbase",
-    name: "Coinbase Wallet",
-    icon: "/lovable-uploads/5830bd79-3511-41dc-af6c-8db32d91fc2c.png",
-    description: "Connect to your Coinbase wallet",
-  },
-  {
-    id: "walletconnect",
-    name: "WalletConnect",
-    icon: "/lovable-uploads/1e2a48dc-059b-4919-a1ed-44685d771a32.png",
-    description: "Connect with WalletConnect",
   },
 ];
 
@@ -112,76 +94,44 @@ export function WalletConnect({
         <DialogHeader>
           <DialogTitle>Connect Wallet</DialogTitle>
           <DialogDescription>
-            Connect your wallet to interact with Avalaunch
+            Connect your MetaMask wallet to interact with Avalaunch
           </DialogDescription>
         </DialogHeader>
 
         {!connecting ? (
-          <div className="grid gap-4 py-4">
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-md p-3 text-red-500 text-sm mb-2">
-                {error}
-              </div>
-            )}
-
+          <div className="space-y-3">
             {walletOptions.map((wallet) => (
-              <button
+              <Button
                 key={wallet.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-black/40 border border-white/10 hover:border-white/20 transition-all"
                 onClick={() => handleConnect(wallet)}
+                variant="outline"
+                className="w-full justify-start h-auto p-4 bg-white/5 hover:bg-white/10 border-white/20 hover:border-white/30"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center space-x-3">
                   <img
                     src={wallet.icon}
                     alt={wallet.name}
-                    className="w-8 h-8 rounded-md object-cover"
+                    className="w-8 h-8 rounded-lg"
                   />
-                  <div className="text-left">
-                    <p className="font-medium">{wallet.name}</p>
-                    <p className="text-sm text-gray-400">
-                      {wallet.description}
-                    </p>
+                  <div className="flex-1 text-left">
+                    <div className="font-medium text-white">{wallet.name}</div>
+                    <div className="text-sm text-gray-400">{wallet.description}</div>
                   </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400" />
-              </button>
+              </Button>
             ))}
-
-            <p className="text-xs text-gray-400 text-center mt-2">
-              By connecting your wallet, you agree to our Terms of Service and
-              Privacy Policy
-            </p>
           </div>
         ) : (
-          <div className="py-8 flex flex-col items-center">
-            <div className="w-16 h-16 rounded-full bg-black/40 border border-white/10 flex items-center justify-center mb-4">
-              <img
-                src={selectedWallet?.icon}
-                alt={selectedWallet?.name}
-                className="w-8 h-8 object-cover"
-              />
-            </div>
-            <h3 className="text-lg font-medium mb-1">
-              Connecting to {selectedWallet?.name}
-            </h3>
-            <p className="text-sm text-gray-400 mb-4">
-              Confirm the connection in your wallet
-            </p>
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="text-white">Connecting to {selectedWallet?.name}...</p>
+          </div>
+        )}
 
-            <div className="animate-pulse w-8 h-1 bg-primary rounded-full"></div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-6 border-white/20"
-              onClick={() => {
-                setConnecting(false);
-                setSelectedWallet(null);
-              }}
-            >
-              <X className="w-4 h-4 mr-2" />
-              Cancel
-            </Button>
+        {error && (
+          <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
           </div>
         )}
       </DialogContent>

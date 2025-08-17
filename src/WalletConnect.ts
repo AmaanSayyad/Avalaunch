@@ -6,15 +6,7 @@ export const config = createConfig({
   chains: [avalanche, avalancheFuji],
   multiInjectedProviderDiscovery: false,
   connectors: [
-    injected({
-      target() {
-        return {
-          id: "CoreWallet",
-          name: "Core",
-          provider: window.avalanche,
-        };
-      },
-    }),
+    injected(), // This will automatically detect MetaMask
   ],
   transports: {
     [avalanche.id]: http(),
