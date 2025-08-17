@@ -15,6 +15,7 @@ import FounderDashboard from "./pages/FounderDashboard";
 import FounderProjectsList from "./pages/FounderProjectsList";
 import Governance from "./pages/Governance";
 import CreateProject from "./pages/CreateProject";
+import HowItWorks from "./pages/HowItWorks";
 import { config } from "./WalletConnect";
 import { WagmiProvider } from "wagmi";
 import { ContractProvider } from "./context/contractContext";
@@ -49,8 +50,9 @@ const App = () => {
                       path="/founder-dashboard/project/:id"
                       element={<FounderDashboard />}
                     />
-                    <Route path="/governance" element={<Governance />} />
-                    <Route path="/create-project" element={<CreateProject />} />
+                                    <Route path="/governance" element={<Governance />} />
+                <Route path="/create-project" element={<CreateProject />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
                   </Routes>
                 </BrowserRouter>
               </div>

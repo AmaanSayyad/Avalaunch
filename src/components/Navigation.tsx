@@ -44,7 +44,7 @@ const Navigation = () => {
     { name: "Explore Projects", href: "/explore", onClick: () => window.location.href = "/explore" },
     { name: "Create Project", href: "/create-project", onClick: () => window.location.href = "/create-project" },
     { name: "Governance", href: "/governance", onClick: () => window.location.href = "/governance" },
-    { name: "How It Works", href: "#features", onClick: () => scrollToSection('features') },
+    { name: "How It Works", href: "/how-it-works", onClick: () => window.location.href = "/how-it-works" },
     { name: "For Investors", href: "#for-investors", onClick: () => scrollToSection('for-investors') },
   ];
 
