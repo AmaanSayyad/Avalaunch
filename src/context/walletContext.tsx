@@ -91,11 +91,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log("Starting wallet connection...");
       
-      // Use a more direct approach - create provider first, then request accounts
-      const provider = new BrowserProvider(window.ethereum);
-      
-      // Request accounts through the provider
-      const accounts = await provider.send("eth_requestAccounts", []);
+      // Use the most basic approach possible - direct window.ethereum.request
+      // This bypasses any provider/signer creation until we have accounts
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       
       if (!accounts || accounts.length === 0) {
         throw new Error("No accounts found");
@@ -103,7 +101,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       
       console.log("Accounts received:", accounts);
       
-      // Create signer
+      // Now create provider and signer after we have accounts
+      const provider = new BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
       
@@ -120,38 +119,44 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       
       console.log("Wallet connected successfully:", shortenAddress(address));
       
-      // Try to switch to Avalanche network (optional, don't fail if it doesn't work)
-      try {
-        console.log("Attempting to switch to Avalanche network...");
-        await provider.send("wallet_switchEthereumChain", [{ chainId: "0xA869" }]);
-        console.log("Successfully switched to Avalanche network");
-      } catch (switchError: any) {
-        console.log("Could not switch to Avalanche network:", switchError.message);
-        
-        // If chain not added, try to add it
-        if (switchError.code === 4902) {
-          try {
-            console.log("Adding Avalanche network...");
-            await provider.send("wallet_addEthereumChain", [
-              {
-                chainId: "0xA869",
-                chainName: "Avalanche Fuji C-Chain",
-                nativeCurrency: {
-                  name: "Avalanche",
-                  symbol: "AVAX",
-                  decimals: 18,
-                },
-                rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
-                blockExplorerUrls: ["https://testnet.snowtrace.io/"],
-              },
-            ]);
-            console.log("Successfully added Avalanche network");
-          } catch (addError) {
-            console.log("Could not add Avalanche network:", addError);
-            // Continue with connection even if network setup fails
+      // Network switching is optional - don't let it break the connection
+      setTimeout(async () => {
+        try {
+          console.log("Attempting to switch to Avalanche network...");
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xA869" }],
+          });
+          console.log("Successfully switched to Avalanche network");
+        } catch (switchError: any) {
+          console.log("Could not switch to Avalanche network:", switchError.message);
+          
+          if (switchError.code === 4902) {
+            try {
+              console.log("Adding Avalanche network...");
+              await window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                  {
+                    chainId: "0xA869",
+                    chainName: "Avalanche Fuji C-Chain",
+                    nativeCurrency: {
+                      name: "Avalanche",
+                      symbol: "AVAX",
+                      decimals: 18,
+                    },
+                    rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+                    blockExplorerUrls: ["https://testnet.snowtrace.io/"],
+                  },
+                ],
+              });
+              console.log("Successfully added Avalanche network");
+            } catch (addError) {
+              console.log("Could not add Avalanche network:", addError);
+            }
           }
         }
-      }
+      }, 1000); // Delay network switching to avoid blocking the connection
       
     } catch (error) {
       console.error("Failed to connect wallet:", error);
