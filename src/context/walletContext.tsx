@@ -91,9 +91,26 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     try {
       console.log("Starting wallet connection...");
       
-      // Use the most basic approach possible - direct window.ethereum.request
-      // This bypasses any provider/signer creation until we have accounts
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      // Method 1: Try the standard approach first
+      let accounts;
+      try {
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      } catch (requestError) {
+        console.warn("Standard request failed, trying alternative method:", requestError);
+        
+        // Method 2: Try using a different approach
+        try {
+          // Try to get accounts without requesting (they might already be available)
+          accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          
+          if (!accounts || accounts.length === 0) {
+            throw new Error("No accounts available");
+          }
+        } catch (accountsError) {
+          console.warn("Alternative method also failed:", accountsError);
+          throw new Error("Unable to connect to wallet. Please try refreshing the page or reconnecting MetaMask.");
+        }
+      }
       
       if (!accounts || accounts.length === 0) {
         throw new Error("No accounts found");
@@ -102,9 +119,15 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       console.log("Accounts received:", accounts);
       
       // Now create provider and signer after we have accounts
-      const provider = new BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
+      let provider, signer, address;
+      try {
+        provider = new BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
+        address = await signer.getAddress();
+      } catch (providerError) {
+        console.error("Error creating provider/signer:", providerError);
+        throw new Error("Failed to create wallet connection. Please try again.");
+      }
       
       console.log("Provider and signer created successfully");
       
@@ -120,6 +143,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       console.log("Wallet connected successfully:", shortenAddress(address));
       
       // Network switching is optional - don't let it break the connection
+      // Use a longer delay to ensure connection is stable first
       setTimeout(async () => {
         try {
           console.log("Attempting to switch to Avalanche network...");
@@ -156,7 +180,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
             }
           }
         }
-      }, 1000); // Delay network switching to avoid blocking the connection
+      }, 2000); // Longer delay to ensure connection is stable
       
     } catch (error) {
       console.error("Failed to connect wallet:", error);
