@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useEffect, useCallback, memo } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 import { BrowserProvider, JsonRpcSigner } from "ethers";
 
 interface WalletContextType {
@@ -33,158 +33,54 @@ export const WalletContext = createContext<WalletContextType>({
   disconnectWallet: () => {}
 });
 
-const WalletProviderComponent = ({ children }: { children: ReactNode }) => {
+export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  
-  // Function to restore wallet connection
-  const restoreConnection = useCallback(async () => {
-    if (!window.ethereum) return false;
-    
-    try {
-      // Check if we're still authorized
-      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-      
-      if (accounts && accounts.length > 0) {
-        // We're still connected - create provider and signer
-        const provider = new BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-        
-        setProvider(provider);
-        setSigner(signer);
-        setWalletAddress(address);
-        setIsConnected(true);
-        
-        console.log("Wallet connection restored:", shortenAddress(address));
-        return true;
-      }
-    } catch (error) {
-      console.error("Error restoring wallet connection:", error);
-    }
-    
-    return false;
-  }, []);
   
   // Check for saved wallet connection on component mount
   useEffect(() => {
-    const initializeWallet = async () => {
-      if (isInitialized) return;
-      
+    const checkConnection = async () => {
       const savedIsConnected = localStorage.getItem('walletConnected') === 'true';
       
-      if (savedIsConnected) {
-        const restored = await restoreConnection();
-        if (!restored) {
-          // If restoration failed, clear the saved state
-          localStorage.removeItem('walletConnected');
-        }
-      }
-      
-      setIsInitialized(true);
-    };
-    
-    initializeWallet();
-  }, [isInitialized, restoreConnection]);
-  
-  // Monitor wallet connection status
-  useEffect(() => {
-    if (!window.ethereum || !isInitialized) return;
-    
-    const checkConnectionStatus = async () => {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        
-        if (accounts && accounts.length > 0) {
-          // We have accounts, ensure we're connected
-          if (!isConnected) {
-            console.log("Reconnecting wallet after page navigation...");
-            await restoreConnection();
-          }
-        } else {
-          // No accounts, ensure we're disconnected
-          if (isConnected) {
-            console.log("Wallet disconnected, clearing state...");
-            disconnectWallet();
-          }
-        }
-      } catch (error) {
-        console.error("Error checking connection status:", error);
-      }
-    };
-    
-    // Check immediately
-    checkConnectionStatus();
-    
-    // Set up interval to check connection status
-    const interval = setInterval(checkConnectionStatus, 5000); // Check every 5 seconds
-    
-    return () => clearInterval(interval);
-  }, [isInitialized, isConnected, restoreConnection]);
-  
-  // Listen for account changes
-  useEffect(() => {
-    if (!window.ethereum || !isInitialized) return;
-    
-    const handleAccountsChanged = async (accounts: string[]) => {
-      console.log("Accounts changed:", accounts);
-      
-      if (accounts.length === 0) {
-        // User disconnected their wallet
-        console.log("Wallet disconnected by user");
-        disconnectWallet();
-      } else if (isConnected) {
-        // Account changed while connected
+      if (savedIsConnected && window.ethereum) {
         try {
-          const provider = new BrowserProvider(window.ethereum);
-          const signer = await provider.getSigner();
-          const address = await signer.getAddress();
+          // Check if we're still authorized using a simple request
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
           
-          setProvider(provider);
-          setSigner(signer);
-          setWalletAddress(address);
-          console.log("Account changed:", shortenAddress(address));
+          if (accounts && accounts.length > 0) {
+            // We're still connected - create provider and signer
+            try {
+              const provider = new BrowserProvider(window.ethereum);
+              const signer = await provider.getSigner();
+              const address = await signer.getAddress();
+              
+              setProvider(provider);
+              setSigner(signer);
+              setWalletAddress(address);
+              setIsConnected(true);
+              console.log("Restored wallet connection:", shortenAddress(address));
+            } catch (providerError) {
+              console.error("Error creating provider:", providerError);
+              localStorage.removeItem('walletConnected');
+              setIsConnected(false);
+            }
+          } else {
+            // Authorization revoked
+            localStorage.removeItem('walletConnected');
+            setIsConnected(false);
+          }
         } catch (error) {
-          console.error("Error handling account change:", error);
+          console.error("Error restoring wallet connection:", error);
+          localStorage.removeItem('walletConnected');
+          setIsConnected(false);
         }
       }
     };
     
-    const handleChainChanged = () => {
-      console.log("Chain changed, refreshing connection...");
-      // Refresh the connection when chain changes
-      if (isConnected) {
-        restoreConnection();
-      }
-    };
-    
-    const handleDisconnect = () => {
-      console.log("Wallet disconnected");
-      disconnectWallet();
-    };
-    
-    try {
-      // Only add listeners if the methods exist
-      if (typeof window.ethereum.on === 'function') {
-        window.ethereum.on('accountsChanged', handleAccountsChanged);
-        window.ethereum.on('chainChanged', handleChainChanged);
-        window.ethereum.on('disconnect', handleDisconnect);
-        
-        return () => {
-          if (typeof window.ethereum.removeListener === 'function') {
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-            window.ethereum.removeListener('chainChanged', handleChainChanged);
-            window.ethereum.removeListener('disconnect', handleDisconnect);
-          }
-        };
-      }
-    } catch (error) {
-      console.warn("Could not set up wallet event listeners:", error);
-    }
-  }, [isInitialized, isConnected, restoreConnection]);
+    checkConnection();
+  }, []);
   
   const connectWallet = async () => {
     if (!window.ethereum) {
@@ -321,6 +217,3 @@ const WalletProviderComponent = ({ children }: { children: ReactNode }) => {
     </WalletContext.Provider>
   );
 };
-
-// Export the memoized provider to prevent unnecessary re-renders
-export const WalletProvider = memo(WalletProviderComponent);
